@@ -5,6 +5,10 @@ require("libs.Skillshot")
 
 local config = ScriptConfig.new()
 config:SetParameter("HotKey", "D", config.TYPE_HOTKEY)
+config:SetParameter("Ult", true)
+config:SetParameter("Soul", true)
+config:SetParameter("Arcan", true)
+config:SetParameter("dagOn", true)
 config:Load()
 
 local play = false local target = nil local castQueue = {} local sleep = {0,0,0}
@@ -48,11 +52,12 @@ function Main(tick)
 				local sheep = me:FindItem("item_sheepstick")
 				local soulring = me:FindItem("item_soul_ring")
 				local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
+				local arcane = me:FindItem("item_arcane_boots")
 				local linkens = target:IsLinkensProtected()
 				if E and E:CanBeCasted() and me:CanCast() and not linkens then
 					table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target})
 				end
-				if dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
+				if config.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
 					table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 					Sleep(me:GetTurnTime(target)*1000, "casting")
 				end
@@ -83,14 +88,17 @@ function Main(tick)
 				if veil and veil:CanBeCasted() and me:CanCast() then
 					table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
 				end
-				if me.mana < me.maxMana*0.5 and soulring and soulring:CanBeCasted() then
+				if me.mana < me.maxMana*0.5 and config.Arcan and arcane and arcane:CanBeCasted() then
+					table.insert(castQueue,{100,arcane})
+				end
+				if me.mana < me.maxMana*0.5 and config.Soul and soulring and soulring:CanBeCasted() then
 					table.insert(castQueue,{100,soulring})
 				end
-				if R and R:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_concussive_shot_slow") then
+				if config.Ult and R and R:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_concussive_shot_slow") then
 					table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target.position})
 					Sleep(me:GetTurnTime(target)*1000, "casting")
 				end
-				if dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") then
+				if config.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") then
 					table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 					Sleep(me:GetTurnTime(target)*1000, "casting")
 				end
