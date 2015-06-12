@@ -19,19 +19,19 @@ function Main(tick)
 		table.remove(castQueue,1)
 		local ability = v[2]
 		if type(ability) == "string" then
- ability = me:FindItem(ability)
+			ability = me:FindItem(ability)
 		end
 		if ability and ((me:SafeCastAbility(ability,v[3],false)) or (v[4] and ability:CanBeCasted())) then
 			if v[4] and ability:CanBeCasted() then
- me:CastAbility(ability,v[3],false)
+				me:CastAbility(ability,v[3],false)
 			end
- sleep[2] = tick + v[1] + client.latency
+			sleep[2] = tick + v[1] + client.latency
 			return
 		end
 	end
 
 	if IsKeyDown(config.HotKey) and not client.chat then
- target = targetFind:GetClosestToMouse(100)
+		target = targetFind:GetClosestToMouse(100)
 		if tick > sleep[1] then
 			if target and target.alive and target.visible and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
 				local Q = me:GetAbility(1)
@@ -48,7 +48,8 @@ function Main(tick)
 				local sheep = me:FindItem("item_sheepstick")
 				local soulring = me:FindItem("item_soul_ring")
 				local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
-				if E and E:CanBeCasted() and me:CanCast() then
+				local linkens = target:IsLinkensProtected()
+				if E and E:CanBeCasted() and me:CanCast() and not linkens then
 					table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target})
 				end
 				if dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
@@ -77,10 +78,10 @@ function Main(tick)
 					Sleep(me:GetTurnTime(target)*1000, "casting")
 				end
 				if distance <= 1590 and W and W:CanBeCasted() and me:CanCast() then
-					table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W}) 
+					table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W})        
 				end
 				if veil and veil:CanBeCasted() and me:CanCast() then
-					table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position}) 
+					table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
 				end
 				if me.mana < me.maxMana*0.5 and soulring and soulring:CanBeCasted() then
 					table.insert(castQueue,{100,soulring})
@@ -94,11 +95,11 @@ function Main(tick)
 					Sleep(me:GetTurnTime(target)*1000, "casting")
 				end
 				if not slow then
- me:Attack(target)
+					me:Attack(target)
 				elseif slow then
- me:Follow(me)
+					me:Follow(me)
 				end
- sleep[1] = tick + 100
+				sleep[1] = tick + 100
 			end
 		end
 	end
@@ -108,25 +109,25 @@ function Load()
 	if PlayingGame() then
 		local me = entityList:GetMyHero()
 		if not me or me.classId ~= CDOTA_Unit_Hero_Skywrath_Mage then 
- script:Disable()
+			script:Disable()
 		else
- play = true
- target = nil
- myhero = me.classId
- script:RegisterEvent(EVENT_FRAME, Main)
- script:UnregisterEvent(Load)
+			play = true
+			target = nil
+			myhero = me.classId
+			script:RegisterEvent(EVENT_FRAME, Main)
+			script:UnregisterEvent(Load)
 		end
 	end
 end
 
 function Close()
- target = nil 
- myhero = nil
+	target = nil 
+	myhero = nil
 	collectgarbage("collect")
 	if play then
- script:UnregisterEvent(Main)
- script:RegisterEvent(EVENT_TICK,Load)
- play = false
+		script:UnregisterEvent(Main)
+		script:RegisterEvent(EVENT_TICK,Load)
+		play = false
 	end
 end
 
