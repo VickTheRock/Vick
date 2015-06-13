@@ -43,12 +43,14 @@ function Main(tick)
 				local ethereal = me:FindItem("item_ethereal_blade")
 				local veil = me:FindItem("item_veil_of_discord")
 				local atos = me:FindItem("item_rod_of_atos")
+				local mom = me:FindItem("item_mask_of_madness")
+				local satanic = me:FindItem("item_satanic")
+				local sheep = me:FindItem("item_sheepstick")
 				local orchid = me:FindItem("item_orchid")
 				local soulring = me:FindItem("item_soul_ring")
 				local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
 				if dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
 					table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
-					Sleep(me:GetTurnTime(target)*1000, "casting")
 				end
 				if halberd and halberd:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_invoker_tornado") then
 					table.insert(castQueue,{1000+math.ceil(halberd:FindCastPoint()*1000),halberd,target})
@@ -58,22 +60,27 @@ function Main(tick)
 				end
 				if abyssal and abyssal:CanBeCasted() and me:CanCast()  and target:DoesHaveModifier("modifier_invoker_tornado") then
 					table.insert(castQueue,{math.ceil(abyssal:FindCastPoint()*1000),abyssal,target})
-					Sleep(me:GetTurnTime(target)*1000, "casting")
+				end
+				if mom and mom:CanBeCasted() and me:CanCast() then
+					table.insert(castQueue,{1000+math.ceil(mom:FindCastPoint()*1000),mom})        
+				end
+				if satanic and satanic:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+500 then
+					table.insert(castQueue,{100,satanic})
+				end
+				if sheep and sheep:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_invoker_tornado") then
+				table.insert(castQueue,{math.ceil(sheep:FindCastPoint()*800),sheep,target})
 				end
 				if orchid and orchid:CanBeCasted() and me:CanCast() then
 					table.insert(castQueue,{math.ceil(orchid:FindCastPoint()*1000),orchid,target})
-					Sleep(me:GetTurnTime(target)*1000, "casting")
 				end
 				if sheep and sheep:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_invoker_tornado") then
 					table.insert(castQueue,{math.ceil(sheep:FindCastPoint()*800),sheep,target})
-					Sleep(me:GetTurnTime(target)*800, "casting")
 				end
 				if ethereal and ethereal:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_invoker_tornado") then
 					table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
 				end
 				if atos and atos:CanBeCasted() and me:CanCast() then
 					table.insert(castQueue,{math.ceil(atos:FindCastPoint()*1000),atos,target})
-					Sleep(me:GetTurnTime(target)*1000, "casting")
 				end
 				if veil and veil:CanBeCasted() and me:CanCast() then
 					table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
@@ -83,7 +90,6 @@ function Main(tick)
 				end
 				if dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_invoker_tornado") then
 					table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
-					Sleep(me:GetTurnTime(target)*1000, "casting")
 				end
 				if not slow then
 					me:Attack(target)
