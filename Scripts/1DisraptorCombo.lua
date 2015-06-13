@@ -51,7 +51,6 @@ function Main(tick)
 			local shiva = me:FindItem("item_shivas_guard")
 			local orchid = me:FindItem("item_orchid")
 			local sheep = me:FindItem("item_sheepstick")
-			local mom = me:FindItem("item_mask_of_madness")
 			local soulring = me:FindItem("item_soul_ring")
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
 			local arcane = me:FindItem("item_arcane_boots")
@@ -78,12 +77,6 @@ function Main(tick)
 			end
 			if atos and atos:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(atos:FindCastPoint()*1000),atos,target})
-			end
-			if distance <= 1590 and W and W:CanBeCasted() and me:CanCast() then
-				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W})        
-			end
-			if mom and mom:CanBeCasted() and me:CanCast() then
-				table.insert(castQueue,{1000+math.ceil(mom:FindCastPoint()*1000),mom})        
 			end
 			if veil and veil:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
