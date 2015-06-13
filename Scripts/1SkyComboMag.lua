@@ -1,6 +1,6 @@
 require("libs.Utils")
 require("libs.TargetFind")
-require('libs.HotkeyConfig2')
+require("libs.HotkeyConfig2")
 require("libs.Skillshot")
 
 ScriptConfig = ConfigGUI:New(script.name)
@@ -72,7 +72,7 @@ function Main(tick)
 			if Q and Q:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target})
 			end
-			if ethereal and ethereal:CanBeCasted() and me:CanCast() then
+			if ethereal and ethereal:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
 			end
 			if atos and atos:CanBeCasted() and me:CanCast() then
