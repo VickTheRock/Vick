@@ -64,7 +64,7 @@ function Main(tick)
 				if mom and mom:CanBeCasted() and me:CanCast() then
 					table.insert(castQueue,{1000+math.ceil(mom:FindCastPoint()*1000),mom})        
 				end
-				if satanic and satanic:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+500 then
+				if satanic and satanic:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange then
 					table.insert(castQueue,{100,satanic})
 				end
 				if sheep and sheep:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_invoker_tornado") then
