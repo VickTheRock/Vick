@@ -55,6 +55,7 @@ function Main(tick)
 			local soulring = me:FindItem("item_soul_ring")
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
 			local arcane = me:FindItem("item_arcane_boots")
+			local linkens = target:IsLinkensProtected()
 			if E and E:CanBeCasted() and me:CanCast() and not linkens  then
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target})
 			end
