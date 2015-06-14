@@ -37,6 +37,7 @@ function Main(tick)
 		if tick > sleep[1] then
 			if target and target.alive and target.visible and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
 				local distance = GetDistance2D(target,me)
+				local attackRange = me.attackRange	
 				local dagon = me:FindDagon()
 				local halberd = me:FindItem("item_heavens_halberd")
 				local abyssal = me:FindItem("item_abyssal_blade")
