@@ -11,6 +11,7 @@ ScriptConfig:SetExtention(-.3)
 ScriptConfig:SetVisible(false)
 
 ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
+ScriptConfig:AddParam("Glimpse","GlimpseKey",SGC_TYPE_ONKEYDOWN,false,false,87)
 ScriptConfig:AddParam("Ult","StaticStorm",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Soul","Soul Ring",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Arcan","Arcan",SGC_TYPE_TOGGLE,false,true,nil)
@@ -105,6 +106,15 @@ function Main(tick)
 				me:Follow(me)
 			end
 			sleep = tick + 200
+		end
+	end
+	if ScriptConfig.Glimpse and tick > sleep then
+		target = targetFind:GetClosestToMouse(100)
+		if target and GetDistance2D(target,me) <= 2500 and not target:IsMagicImmune() and target:CanDie() then
+			local W = me:GetAbility(2)
+			if W and W:CanBeCasted() and me:CanCast() then
+				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target})
+			end
 		end
 	end
 end
