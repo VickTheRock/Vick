@@ -73,6 +73,10 @@ function Main(tick)
 			if Q and Q:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target})
 			end
+			if Q and Q:CanBeCasted() and me:CanCast() and linkens then
+				me:CastAbility(Q,target)
+				Sleep(150, "(Insert Sleep Check Name Here)")
+			end
 			if ethereal and ethereal:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
 			end
