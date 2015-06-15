@@ -50,7 +50,7 @@ function Main(tick)
 			local soulring = me:FindItem("item_soul_ring")
 			local satanic = me:FindItem("item_satanic")
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
-			local diffusal = me:FindItem("item_diffusal_blade") or me:FindItem("item_diffusal_blade_2")
+			local diffusal = me:FindItem("item_diffusal_blade")
 			local wand = me:FindItem("item_magic_wand")
 			local stick = me:FindItem("item_magic_stick")
 			local staff = me:FindItem("item_forcestaff")
@@ -61,6 +61,10 @@ function Main(tick)
 			end
 			if (ScriptConfig.Diffusal) and diffusal and diffusal:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(diffusal:FindCastPoint()*800),diffusal,target})
+			end
+			if Q and Q:CanBeCasted() and me:CanCast() and linkens then
+				me:CastAbility(Q,target)
+				Sleep(150, "(Insert Sleep Check Name Here)")
 			end
 			if Q and Q:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,me})
