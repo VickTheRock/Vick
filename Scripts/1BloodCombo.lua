@@ -13,6 +13,7 @@ ScriptConfig:SetVisible(false)
 ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
 ScriptConfig:AddParam("Ult","Rupture",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Diffusal","diff",SGC_TYPE_TOGGLE,false,true,nil)
+ScriptConfig:AddParam("Cheese","Cheese",SGC_TYPE_TOGGLE,false,true,nil)
 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
 
@@ -88,7 +89,7 @@ function Main(tick)
 			if satanic and satanic:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+300 then
 				table.insert(castQueue,{100,satanic})
 			end
-			if cheese and cheese:CanBeCasted() and me.health/me.maxHealth <= 0.3 and distance <= attackRange+600 then
+			if (ScriptConfig.Cheese) and cheese and cheese:CanBeCasted() and me.health/me.maxHealth <= 0.3 and distance <= attackRange+600 then
 				table.insert(castQueue,{100,cheese})
 			end	
 			
