@@ -66,7 +66,7 @@ function Main(tick)
 				me:CastAbility(Q,target)
 				Sleep(150, "(Insert Sleep Check Name Here)")
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() then
+			if Q and Q:CanBeCasted() and me:CanCast() and not linkens then
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,me})
 			end
 			if staff and staff:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_bloodseeker_rupture") then
