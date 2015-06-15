@@ -95,13 +95,14 @@ function Main(tick)
 			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and soulring and soulring:CanBeCasted() then
 				table.insert(castQueue,{100,soulring})
 			end
-			if (ScriptConfig.Ult or target:IsStunned()) and target:FindModifier("modifier_skywrath_mage_concussive_shot_slow") and R and R:CanBeCasted() and me:CanCast() and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") then
+			if (ScriptConfig.Ult or target:IsStunned()) and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") and target:FindModifier("modifier_skywrath_mage_concussive_shot_slow") and R and R:CanBeCasted() and me:CanCast() then
 				local CP = R:FindCastPoint()
 				local delay = CP*1000+client.latency+me:GetTurnTime(target)*1000
 				local speed = 1200
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 				if xyz then 
 					table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target.position})
+						Sleep(me:GetTurnTime(target)*1000, "casting")
 				end
 			end
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") then
@@ -112,7 +113,7 @@ function Main(tick)
 			elseif slow then
 				me:Follow(me)
 			end
-			sleep = tick + 200
+			sleep = tick + 350
 		end
 	end
 end
