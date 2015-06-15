@@ -65,13 +65,13 @@ function Main(tick)
 			if Q and Q:CanBeCasted() and me:CanCast() and linkens then
 				me:CastAbility(Q,target)
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and not linkens then
+			if Q and Q:CanBeCasted() and me:CanCast() and not linkens and not me:DoesHaveModifier("modifier_bloodseeker_bloodrage") then 
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,me})
 			end
 			if ethereal and ethereal:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
 			end
-			if W and W:CanBeCasted() and me:CanCast() then
+			if W and W:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_bloodseeker_rupture") then
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})        
 			end
 			if mom and mom:CanBeCasted() and me:CanCast() then
