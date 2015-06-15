@@ -53,7 +53,6 @@ function Main(tick)
 			local diffusal = me:FindItem("item_diffusal_blade")
 			local wand = me:FindItem("item_magic_wand")
 			local stick = me:FindItem("item_magic_stick")
-			local staff = me:FindItem("item_forcestaff")
 			local cheese = me:FindItem("item_cheese")
 			local linkens = target:IsLinkensProtected()
 			if abyssal and abyssal:CanBeCasted() and me:CanCast() then
@@ -64,13 +63,9 @@ function Main(tick)
 			end
 			if Q and Q:CanBeCasted() and me:CanCast() and linkens then
 				me:CastAbility(Q,target)
-				Sleep(150, "(Insert Sleep Check Name Here)")
 			end
 			if Q and Q:CanBeCasted() and me:CanCast() and not linkens then
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,me})
-			end
-			if staff and staff:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_bloodseeker_rupture") then
-				table.insert(castQueue,{math.ceil(staff:FindCastPoint()*1000),staff,target})
 			end
 			if ethereal and ethereal:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
