@@ -1,6 +1,6 @@
 require("libs.Utils")
 require("libs.TargetFind")
-require('libs.HotkeyConfig2')
+require("libs.HotkeyConfig2")
 require("libs.Skillshot")
 
 ScriptConfig = ConfigGUI:New(script.name)
@@ -70,19 +70,19 @@ function Main(tick)
 				table.insert(castQueue,{math.ceil(orchid:FindCastPoint()*1000),orchid,target})
 			end
 			if Q and Q:CanBeCasted() and me:CanCast() then
-				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target})
+				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target,true})
 			end
 			if ethereal and ethereal:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
 			end
 			if atos and atos:CanBeCasted() and me:CanCast() then
-				table.insert(castQueue,{math.ceil(atos:FindCastPoint()*1000),atos,target})
+				table.insert(castQueue,{100,atos,target}) 
 			end
 			if distance <= 1590 and W and W:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W})        
 			end
 			if veil and veil:CanBeCasted() and me:CanCast() then
-				table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
+				table.insert(castQueue,{100,veil,target.position})       
 			end
 			if me.mana < me.maxMana*0.5 and ScriptConfig.Arcan and arcane and arcane:CanBeCasted() then
 				table.insert(castQueue,{100,arcane})
@@ -90,7 +90,7 @@ function Main(tick)
 			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and soulring and soulring:CanBeCasted() then
 				table.insert(castQueue,{100,soulring})
 			end
-			if (ScriptConfig.Ult or IsSlowMove(target)) and R and R:CanBeCasted() and me:CanCast() then
+			if (ScriptConfig.Ult or target:IsStunned()) and IsSlowMove(target) and R and R:CanBeCasted() and me:CanCast() then
 				local CP = R:FindCastPoint()
 				local delay = CP*1000+client.latency+me:GetTurnTime(target)*1000
 				local speed = 1200
@@ -105,7 +105,7 @@ function Main(tick)
 			if not slow then
 				me:Attack(target)
 			elseif slow then
-				me:Follow(me)
+				me:Follow(target)
 			end
 			castsleep = tick + 200
 		end
