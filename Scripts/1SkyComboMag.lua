@@ -97,6 +97,7 @@ function Main(tick)
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 				if xyz then 
 					table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target.position})
+						Sleep(me:GetTurnTime(target)*1000, "casting")
 				end
 			end
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") then
@@ -107,7 +108,7 @@ function Main(tick)
 			elseif slow then
 				me:Follow(target)
 			end
-			castsleep = tick + 200
+			castsleep = tick + 350
 		end
 	end
 end
