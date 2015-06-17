@@ -34,7 +34,7 @@ function Main(tick)
 			if v[4] and ability:CanBeCasted() then
 				me:CastAbility(ability,v[3],false)
 			end
-			castsleep = tick + v[1]
+			castsleep = tick + v[1] + client.latency
 			return
 		end
 	end
@@ -55,9 +55,9 @@ function Main(tick)
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
 			local arcane = me:FindItem("item_arcane_boots")
 			if E and E:CanBeCasted() and me:CanCast() then
-				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target})
+				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target,true})
 			end
-			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
+			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and (ethereal and ethereal.cd ~= 0 and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") or not ethereal) then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
 			if shiva and shiva:CanBeCasted() and distance <= 600 then
@@ -70,7 +70,7 @@ function Main(tick)
 				table.insert(castQueue,{math.ceil(orchid:FindCastPoint()*1000),orchid,target})
 			end
 			if Q and Q:CanBeCasted() and me:CanCast() then
-				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target,true})
+				table.insert(castQueue,{math.ceil(Q:FindCastPoint()*1000),Q,target})
 			end
 			if ethereal and ethereal:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
