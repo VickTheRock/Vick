@@ -112,7 +112,7 @@ function IsSlowMove(target)
 	return target:DoesHaveModifier("modifier_rod_of_atos_debuff")
 	or target:DoesHaveModifier("modifier_skywrath_mage_concussive_shot_slow")
 	or target:DoesHaveModifier("modifier_item_diffusal_blade_slow")
-	or target:DoesHaveModifier("modifier_item_ethereal_blade_slow")modifier_faceless_void_time_walk_slow
+	or target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
 	or target:DoesHaveModifier("modifier_kunkka_torrent_slow")
 	or target:DoesHaveModifier("modifier_leshrac_lightning_storm_slow")
 	or target:DoesHaveModifier("modifier_lich_slow")
@@ -133,6 +133,7 @@ function IsSlowMove(target)
 	or target:DoesHaveModifier("modifier_invoker_ice_wall_slow_debuff")
 	or target:DoesHaveModifier("odifier_faceless_void_time_walk_slow") 
 	or target:DoesHaveModifier("modifier_axe_berserkers_call")
+	or target:DoesHaveModifier("modifier_legion_commander_duel") 
 end
 
 function Load()
