@@ -54,8 +54,9 @@ function Main(tick)
 			local soulring = me:FindItem("item_soul_ring")
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
 			local arcane = me:FindItem("item_arcane_boots")
+			local linkens = target:IsLinkensProtected()
 			local xyz = SkillShot.SkillShotXYZ(me,target,R:FindCastPoint()*1000+client.latency+me:GetTurnTime(target)*1000,1200)
-			if E and E:CanBeCasted() and me:CanCast() then
+			if E and E:CanBeCasted() and me:CanCast() and not linkens then
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target,true})
 			end
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and (ethereal and ethereal.cd ~= 0 and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") or not ethereal) then
