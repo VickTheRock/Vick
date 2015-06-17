@@ -54,6 +54,7 @@ function Main(tick)
 			local soulring = me:FindItem("item_soul_ring")
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
 			local arcane = me:FindItem("item_arcane_boots")
+			local xyz = SkillShot.SkillShotXYZ(me,target,R:FindCastPoint()*1000+client.latency+me:GetTurnTime(target)*1000,1200)
 			if E and E:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target,true})
 			end
@@ -90,15 +91,9 @@ function Main(tick)
 			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and soulring and soulring:CanBeCasted() then
 				table.insert(castQueue,{100,soulring})
 			end
-			if (ScriptConfig.Ult or target:IsStunned()) and IsSlowMove(target) and R and R:CanBeCasted() and me:CanCast() then
-				local CP = R:FindCastPoint()
-				local delay = CP*1000+client.latency+me:GetTurnTime(target)*1000
-				local speed = 1200
-				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
-				if xyz then 
-					table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target.position})
-						Sleep(me:GetTurnTime(target)*1000, "casting")
-				end
+			if (ScriptConfig.Ult or target:IsStunned()) and IsSlowMove(target) and R and R:CanBeCasted() and me:CanCast() and xyz and SleepCheck("stopult") then
+				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target.position})
+				Sleep(4000+client.latency,"stopult")
 			end
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
@@ -108,7 +103,7 @@ function Main(tick)
 			elseif slow then
 				me:Follow(target)
 			end
-			castsleep = tick + 350
+			castsleep = tick + 200
 		end
 	end
 end
