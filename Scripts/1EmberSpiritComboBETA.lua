@@ -12,8 +12,6 @@ ScriptConfig:SetVisible(false)
 
 ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
 ScriptConfig:AddParam("Ult","Ult",SGC_TYPE_TOGGLE,false,true,nil)
-ScriptConfig:AddParam("UseAllUlt","UseAllUlt",SGC_TYPE_TOGGLE,false,true,nil)
-ScriptConfig:AddParam("UseOneUlt","UseOneUlt",SGC_TYPE_TOGGLE,false,true,nil)
 
 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
