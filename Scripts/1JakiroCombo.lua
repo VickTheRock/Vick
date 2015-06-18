@@ -61,15 +61,16 @@ function Main(tick)
 			if (ScriptConfig.Blink) and GetDistance2D(me,target) <= RangeBlink and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange and not blink.abilityPhase then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
-			if W and W:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_jakiro_dual_breath_slow") then
-				local CP = W:FindCastPoint()
-				local delay = CP*1000+client.latency+me:GetTurnTime(target)*1000
-				local speed = 600
+			if W and W:CanBeCasted() and me:CanCast() and IsSlowMove(target) or target:IsStunned() then
+				local CP = Ц:FindCastPoint()
+				local speed = 1500  
+				local distance = GetDistance2D(target, me)
+				local delay =10+client.latency
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
-				if xyz then 
-					table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})
+					if xyz and distance <= 900  then  
+						me:SafeCastAbility(W, xyz)
 				end
-			end
+			end 
 			if E and E:CanBeCasted() and me:CanCast() or linkens or target:DoesHaveModifier("modifier_jakiro_dual_breath_slow") then
 				me:CastAbility(E,target)
 				Sleep(150)
