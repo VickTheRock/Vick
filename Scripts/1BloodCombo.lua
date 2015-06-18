@@ -72,8 +72,15 @@ function Main(tick)
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
 			end
 			if W and W:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_bloodseeker_rupture") then
-				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})        
-			end
+				local CP = W:FindCastPoint()
+				local speed = 1500  
+				local distance = GetDistance2D(target, me)
+				local delay =10+client.latency
+				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
+					if xyz and distance <= 1100  then  
+						me:SafeCastAbility(W, xyz)
+				end
+			end 
 			if mom and mom:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(mom:FindCastPoint()*1000),mom})        
 			end
