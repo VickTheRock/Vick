@@ -12,6 +12,7 @@ ScriptConfig:SetVisible(false)
 
 ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
 ScriptConfig:AddParam("Glimpse","GlimpseKey",SGC_TYPE_ONKEYDOWN,false,false,87)
+ScriptConfig:AddParam("Blink","UseBlink",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Ult","StaticStorm",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Soul","Soul Ring",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Arcan","Arcan",SGC_TYPE_TOGGLE,false,true,nil)
@@ -55,9 +56,21 @@ function Main(tick)
 			local soulring = me:FindItem("item_soul_ring")
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
 			local arcane = me:FindItem("item_arcane_boots")
-			if E and E:CanBeCasted() and me:CanCast() then
-				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target.position})
+			local blink = me:FindItem("item_blink")
+			local attackRange = me.attackRange	
+			if (ScriptConfig.Blink) and GetDistance2D(me,target) and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange -200 and not blink.abilityPhase then
+				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
+			if E and E:CanBeCasted() and me:CanCast() then
+				local CP = E:FindCastPoint()
+				local speed = 1500  
+				local distance = GetDistance2D(target, me)
+				local delay =10+client.latency
+				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
+					if xyz and distance <= 900  then  
+						me:SafeCastAbility(E, xyz)
+				end
+			end 
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
@@ -75,7 +88,7 @@ function Main(tick)
 			end
 			if Q and Q:CanBeCasted() and me:CanCast() and linkens then
 				me:CastAbility(Q,target)
-				Sleep(150, "(Insert Sleep Check Name Here)")
+				Sleep(150)
 			end
 			if ethereal and ethereal:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
@@ -94,13 +107,14 @@ function Main(tick)
 			end
 			if (ScriptConfig.Ult) and R and R:CanBeCasted() and me:CanCast() then
 				local CP = R:FindCastPoint()
-				local delay = CP*1000+client.latency+me:GetTurnTime(target)*1000
-				local speed = 1200
+				local speed = 1200  
+				local distance = GetDistance2D(target, me)
+				local delay =10+client.latency
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
-				if xyz then 
-					table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target.position})
+					if xyz and distance <= 900  then  
+						me:SafeCastAbility(R, xyz)
 				end
-			end
+			end 
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
