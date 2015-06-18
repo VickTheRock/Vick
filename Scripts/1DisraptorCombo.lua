@@ -58,7 +58,7 @@ function Main(tick)
 			local arcane = me:FindItem("item_arcane_boots")
 			local blink = me:FindItem("item_blink")
 			local attackRange = me.attackRange	
-			if (ScriptConfig.Blink) and GetDistance2D(me,target) and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange -300 and not blink.abilityPhase then
+			if (ScriptConfig.Blink) and GetDistance2D(me,target) and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange and not blink.abilityPhase then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
 			if E and E:CanBeCasted() and me:CanCast() then
