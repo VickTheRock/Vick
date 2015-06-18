@@ -12,6 +12,7 @@ ScriptConfig:SetVisible(false)
 
 ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
 ScriptConfig:AddParam("Ult","Mystic Flare",SGC_TYPE_TOGGLE,false,true,nil)
+ScriptConfig:AddParam("Blink","UseBlink",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Soul","Soul Ring",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Arcan","Arcan",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("dagOn","Dagon",SGC_TYPE_TOGGLE,false,true,nil)
@@ -55,7 +56,13 @@ function Main(tick)
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
 			local arcane = me:FindItem("item_arcane_boots")
 			local linkens = target:IsLinkensProtected()
+			local blink = me:FindItem("item_blink")
+			local attackRange = me.attackRange	
+			local RangeBlink = 1500
 			local xyz = SkillShot.SkillShotXYZ(me,target,R:FindCastPoint()*1000+client.latency+me:GetTurnTime(target)*1000,1200)
+			if (ScriptConfig.Blink) and GetDistance2D(me,target) <= RangeBlink and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange and not blink.abilityPhase then
+				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
+			end
 			if E and E:CanBeCasted() and me:CanCast() and not linkens then
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target,true})
 			end
