@@ -11,7 +11,10 @@ ScriptConfig:SetExtention(-.3)
 ScriptConfig:SetVisible(false)
 
 ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
+ScriptConfig:AddParam("Tie_up","Tie up",SGC_TYPE_ONKEYDOWN,false,false,87)
 ScriptConfig:AddParam("Ult","Ult",SGC_TYPE_TOGGLE,false,true,nil)
+ScriptConfig:AddParam("UseAllUlt","UseAllUlt",SGC_TYPE_TOGGLE,false,true,nil)
+ScriptConfig:AddParam("UseOneUlt","UseOneUlt",SGC_TYPE_TOGGLE,false,true,nil)
 
 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
@@ -153,6 +156,24 @@ function Main(tick)
 				me:Attack(target)
 			elseif slow then
 				me:Follow(me)
+			end
+			sleep = tick + 50
+		end
+	end
+	if ScriptConfig.Tie_up and tick > sleep then
+		target = targetFind:GetClosestToMouse(100)
+		if target and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
+			local Q, W = me:GetAbility(1), me:GetAbility(2)
+			local distance = GetDistance2D(target,me)
+			if W and W:CanBeCasted() and me:CanCast() then 
+				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})   				
+			end
+			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") then
+					table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q})
+				sleep = tick + 10
+			end
+			if not slow then
+				me:Attack(target)
 			end
 			sleep = tick + 50
 		end
