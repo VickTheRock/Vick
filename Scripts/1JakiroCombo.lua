@@ -154,6 +154,7 @@ function IsSlowMove(target)
 	or target:DoesHaveModifier("modifier_axe_berserkers_call")
 	or target:DoesHaveModifier("modifier_legion_commander_duel") 
 	or target:DoesHaveModifier("modifier_broodmother_poison_sting_debuff") 
+	or target:DoesHaveModifier("modifier_venomancer_venomous_gale") 
 end
 function Load()
 	if PlayingGame() then
