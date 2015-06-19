@@ -99,9 +99,8 @@ function Main(tick)
 			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and soulring and soulring:CanBeCasted() then
 				table.insert(castQueue,{100,soulring})
 			end
-			if (ScriptConfig.Ult or target:IsStunned()) and IsSlowMove(target) and R and R:CanBeCasted() and me:CanCast() and xyz and SleepCheck("stopult") then
+			if (ScriptConfig.Ult or target:IsStunned()) and IsSlowMove(target) and R and R:CanBeCasted() and me:CanCast() and xyz then
 				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target.position})
-				Sleep(4000+client.latency,"stopult")
 			end
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
@@ -111,7 +110,7 @@ function Main(tick)
 			elseif slow then
 				me:Follow(target)
 			end
-			castsleep = tick + 200
+			castsleep = tick + 350
 		end
 	end
 end
