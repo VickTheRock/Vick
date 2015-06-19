@@ -69,8 +69,15 @@ function Main(tick)
 				table.insert(castQueue,{math.ceil(diffusal:FindCastPoint()*800),diffusal,target})
 			end
 			if Q and Q:CanBeCasted() and me:CanCast() and  me:DoesHaveModifier("modifier_tusk_snowball_movement") and not inv then 
-				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target.position})
-			end
+				local CP = Q:FindCastPoint()
+				local speed = 1500  
+				local distance = GetDistance2D(target, me)
+				local delay =10+client.latency
+				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
+					if xyz and distance <= 1100  then  
+						me:SafeCastAbility(Q, xyz)
+				end
+			end 
 			if ethereal and ethereal:CanBeCasted() and me:CanCast() and not inv then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
 			end
