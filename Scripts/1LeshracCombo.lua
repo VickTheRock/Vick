@@ -148,6 +148,8 @@ function IsSlowMove(target)
 	or target:DoesHaveModifier("modifier_axe_berserkers_call")
 	or target:DoesHaveModifier("modifier_legion_commander_duel") 
 	or target:DoesHaveModifier("modifier_venomancer_venomous_gale") 
+	or target:DoesHaveModifier("modifier_tusk_walrus_punch_slow")
+	or target:DoesHaveModifier("modifier_undying_tombstone_zombie_deathstrike_slow") 
 end
 
 function Load()
