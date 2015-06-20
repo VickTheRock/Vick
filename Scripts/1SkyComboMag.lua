@@ -129,7 +129,7 @@ end
 			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and soulring and soulring:CanBeCasted() then
 				table.insert(castQueue,{100,soulring})
 			end
-			if (ScriptConfig.Ult or target:IsStunned()) and IsSlowMove(target) and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") and target:FindModifier("modifier_skywrath_mage_concussive_shot_slow") and R and R:CanBeCasted() and me:CanCast() then
+			if (ScriptConfig.Ult or target:IsStunned()) and IsSlowMove(target) and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") or target:FindModifier("modifier_skywrath_mage_concussive_shot_slow") and R and R:CanBeCasted() and me:CanCast() then
 				local CP = R:FindCastPoint()
 				local speed =1200  
 				local distance = GetDistance2D(target, me)
