@@ -13,6 +13,7 @@ ScriptConfig:SetVisible(false)
 ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
 ScriptConfig:AddParam("Ult","UseUlt",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Diffusal","diff",SGC_TYPE_TOGGLE,false,true,nil)
+ScriptConfig:AddParam("Urn","Urn",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Cheese","Cheese",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Blink","UseBlink",SGC_TYPE_TOGGLE,false,true,nil)
 
@@ -45,6 +46,8 @@ function Main(tick)
 			local Q, W, E, R = me:GetAbility(1), me:GetAbility(2), me:GetAbility(3), me:GetAbility(6)
 			local distance = GetDistance2D(target,me)
 			local attackRange = me.attackRange	
+			local urn = me:FindItem("item_urn_of_shadows")
+			local dagon = me:FindDagon()
 			local halberd = me:FindItem("item_heavens_halberd")
 			local abyssal = me:FindItem("item_abyssal_blade")
 			local ethereal = me:FindItem("item_ethereal_blade")
@@ -61,6 +64,12 @@ function Main(tick)
 			local blink = me:FindItem("item_blink")
 			if (ScriptConfig.Blink) and GetDistance2D(me,target) and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+300 and not blink.abilityPhase and not inv then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
+			end
+			if dagon and dagon:CanBeCasted() and me:CanCast() and not inv then
+				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
+			end
+			if ScriptConfig.Urn and urn and urn:CanBeCasted() and me:CanCast() and not inv then
+				table.insert(castQueue,{math.ceil(urn:FindCastPoint()*1000),urn,target})
 			end
 			if abyssal and abyssal:CanBeCasted() and me:CanCast() and not inv then
 				table.insert(castQueue,{math.ceil(abyssal:FindCastPoint()*1000),abyssal,target})
