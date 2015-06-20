@@ -1,4 +1,3 @@
-
 require("libs.Utils")
 require("libs.TargetFind")
 require("libs.HotkeyConfig2")
@@ -40,6 +39,37 @@ function Main(tick)
 			return
 		end
 	end
+	
+	function IsSlowMove(target)
+	return target:DoesHaveModifier("modifier_rod_of_atos_debuff")
+	or target:DoesHaveModifier("modifier_skywrath_mage_concussive_shot_slow")
+	or target:DoesHaveModifier("modifier_item_diffusal_blade_slow")
+	or target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
+	or target:DoesHaveModifier("modifier_kunkka_torrent_slow")
+	or target:DoesHaveModifier("modifier_leshrac_lightning_storm_slow")
+	or target:DoesHaveModifier("modifier_lich_slow")
+	or target:DoesHaveModifier("modifier_templar_assassin_trap_slow")
+	or target:DoesHaveModifier("modifier_terrorblade_reflection_slow")
+	or target:DoesHaveModifier("modifier_troll_warlord_whirling_axes_slow")
+	or target:DoesHaveModifier("modifier_tusk_walrus_punch_slow")
+	or target:DoesHaveModifier("modifier_viper_viper_strike_slow")
+	or target:DoesHaveModifier("modifier_crystal_maiden_freezing_field_slow")
+	or target:DoesHaveModifier("modifier_drow_ranger_frost_arrows_slow")
+	or target:DoesHaveModifier("modifier_enchantress_enchant_slow")
+	or target:DoesHaveModifier("modifier_ghost_frost_attack_slow")
+	or target:DoesHaveModifier("modifier_gyrocopter_call_down_slow")
+	or target:DoesHaveModifier("modifier_huskar_life_break_slow")
+	or target:DoesHaveModifier("modifier_skeleton_king_reincarnate_slow")
+	or target:DoesHaveModifier("modifier_viper_poison_attack_slow")
+	or target:DoesHaveModifier("modifier_jakiro_dual_breath_slow")
+	or target:DoesHaveModifier("modifier_invoker_ice_wall_slow_debuff")
+	or target:DoesHaveModifier("odifier_faceless_void_time_walk_slow") 
+	or target:DoesHaveModifier("modifier_axe_berserkers_call")
+	or target:DoesHaveModifier("modifier_legion_commander_duel") 
+	or target:DoesHaveModifier("modifier_venomancer_venomous_gale") 
+	or target:DoesHaveModifier("modifier_tusk_walrus_punch_slow")
+	or target:DoesHaveModifier("modifier_undying_tombstone_zombie_deathstrike_slow") 
+end
 
 	if ScriptConfig.Hotkey and tick > sleep then
 		target = targetFind:GetClosestToMouse(100)
@@ -53,7 +83,6 @@ function Main(tick)
 			local shiva = me:FindItem("item_shivas_guard")
 			local orchid = me:FindItem("item_orchid")
 			local sheep = me:FindItem("item_sheepstick")
-			local mom = me:FindItem("item_mask_of_madness")
 			local soulring = me:FindItem("item_soul_ring")
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
 			local arcane = me:FindItem("item_arcane_boots")
@@ -91,9 +120,6 @@ function Main(tick)
 			if distance <= 1590 and W and W:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W})        
 			end
-			if mom and mom:CanBeCasted() and me:CanCast() then
-				table.insert(castQueue,{1000+math.ceil(mom:FindCastPoint()*1000),mom})        
-			end
 			if veil and veil:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
 			end
@@ -107,7 +133,7 @@ function Main(tick)
 				local CP = R:FindCastPoint()
 				local speed =1200  
 				local distance = GetDistance2D(target, me)
-				local delay =0+client.latency
+				local delay =1000+client.latency
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 					if xyz and distance <= 1200  then  
 						me:SafeCastAbility(R, xyz)
@@ -115,7 +141,7 @@ function Main(tick)
 					end
 				end
 			end
-			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") then
+			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") or target:DoesHaveModifier("modifier_item_orchid_malevolence")  then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
 			if not slow then
@@ -123,40 +149,10 @@ function Main(tick)
 			elseif slow then
 				me:Follow(me)
 			end
-			sleep = tick + 330
+			sleep = tick + 350
 		end
 	end
 
-	function IsSlowMove(target)
-	return target:DoesHaveModifier("modifier_rod_of_atos_debuff")
-	or target:DoesHaveModifier("modifier_skywrath_mage_concussive_shot_slow")
-	or target:DoesHaveModifier("modifier_item_diffusal_blade_slow")
-	or target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
-	or target:DoesHaveModifier("modifier_kunkka_torrent_slow")
-	or target:DoesHaveModifier("modifier_leshrac_lightning_storm_slow")
-	or target:DoesHaveModifier("modifier_lich_slow")
-	or target:DoesHaveModifier("modifier_templar_assassin_trap_slow")
-	or target:DoesHaveModifier("modifier_terrorblade_reflection_slow")
-	or target:DoesHaveModifier("modifier_troll_warlord_whirling_axes_slow")
-	or target:DoesHaveModifier("modifier_tusk_walrus_punch_slow")
-	or target:DoesHaveModifier("modifier_viper_viper_strike_slow")
-	or target:DoesHaveModifier("modifier_crystal_maiden_freezing_field_slow")
-	or target:DoesHaveModifier("modifier_drow_ranger_frost_arrows_slow")
-	or target:DoesHaveModifier("modifier_enchantress_enchant_slow")
-	or target:DoesHaveModifier("modifier_ghost_frost_attack_slow")
-	or target:DoesHaveModifier("modifier_gyrocopter_call_down_slow")
-	or target:DoesHaveModifier("modifier_huskar_life_break_slow")
-	or target:DoesHaveModifier("modifier_skeleton_king_reincarnate_slow")
-	or target:DoesHaveModifier("modifier_viper_poison_attack_slow")
-	or target:DoesHaveModifier("modifier_jakiro_dual_breath_slow")
-	or target:DoesHaveModifier("modifier_invoker_ice_wall_slow_debuff")
-	or target:DoesHaveModifier("odifier_faceless_void_time_walk_slow") 
-	or target:DoesHaveModifier("modifier_axe_berserkers_call")
-	or target:DoesHaveModifier("modifier_legion_commander_duel") 
-	or target:DoesHaveModifier("modifier_venomancer_venomous_gale") 
-	or target:DoesHaveModifier("modifier_tusk_walrus_punch_slow")
-	or target:DoesHaveModifier("modifier_undying_tombstone_zombie_deathstrike_slow") 
-end
 function Load()
 	if PlayingGame() then
 		local me = entityList:GetMyHero()
