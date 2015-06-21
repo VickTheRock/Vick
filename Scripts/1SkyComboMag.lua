@@ -39,37 +39,6 @@ function Main(tick)
 			return
 		end
 	end
-	
-	function IsSlowMove(target)
-	return target:DoesHaveModifier("modifier_rod_of_atos_debuff")
-	or target:DoesHaveModifier("modifier_skywrath_mage_concussive_shot_slow")
-	or target:DoesHaveModifier("modifier_item_diffusal_blade_slow")
-	or target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
-	or target:DoesHaveModifier("modifier_kunkka_torrent_slow")
-	or target:DoesHaveModifier("modifier_leshrac_lightning_storm_slow")
-	or target:DoesHaveModifier("modifier_lich_slow")
-	or target:DoesHaveModifier("modifier_templar_assassin_trap_slow")
-	or target:DoesHaveModifier("modifier_terrorblade_reflection_slow")
-	or target:DoesHaveModifier("modifier_troll_warlord_whirling_axes_slow")
-	or target:DoesHaveModifier("modifier_tusk_walrus_punch_slow")
-	or target:DoesHaveModifier("modifier_viper_viper_strike_slow")
-	or target:DoesHaveModifier("modifier_crystal_maiden_freezing_field_slow")
-	or target:DoesHaveModifier("modifier_drow_ranger_frost_arrows_slow")
-	or target:DoesHaveModifier("modifier_enchantress_enchant_slow")
-	or target:DoesHaveModifier("modifier_ghost_frost_attack_slow")
-	or target:DoesHaveModifier("modifier_gyrocopter_call_down_slow")
-	or target:DoesHaveModifier("modifier_huskar_life_break_slow")
-	or target:DoesHaveModifier("modifier_skeleton_king_reincarnate_slow")
-	or target:DoesHaveModifier("modifier_viper_poison_attack_slow")
-	or target:DoesHaveModifier("modifier_jakiro_dual_breath_slow")
-	or target:DoesHaveModifier("modifier_invoker_ice_wall_slow_debuff")
-	or target:DoesHaveModifier("odifier_faceless_void_time_walk_slow") 
-	or target:DoesHaveModifier("modifier_axe_berserkers_call")
-	or target:DoesHaveModifier("modifier_legion_commander_duel") 
-	or target:DoesHaveModifier("modifier_venomancer_venomous_gale") 
-	or target:DoesHaveModifier("modifier_tusk_walrus_punch_slow")
-	or target:DoesHaveModifier("modifier_undying_tombstone_zombie_deathstrike_slow") 
-end
 
 	if ScriptConfig.Hotkey and tick > sleep then
 		target = targetFind:GetClosestToMouse(100)
@@ -96,7 +65,7 @@ end
 			if E and E:CanBeCasted() and me:CanCast() and not linkens  then
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target})
 			end
-			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
+			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
 			if shiva and shiva:CanBeCasted() and distance <= 600 then
@@ -129,7 +98,7 @@ end
 			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and soulring and soulring:CanBeCasted() then
 				table.insert(castQueue,{100,soulring})
 			end
-			if (ScriptConfig.Ult or target:IsStunned()) and IsSlowMove(target) and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") or target:FindModifier("modifier_skywrath_mage_concussive_shot_slow") and R and R:CanBeCasted() and me:CanCast() then
+			if (ScriptConfig.Ult or target:IsStunned()) and target:FindModifier("modifier_skywrath_mage_concussive_shot_slow") and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") and R and R:CanBeCasted() and me:CanCast() then
 				local CP = R:FindCastPoint()
 				local speed =1200  
 				local distance = GetDistance2D(target, me)
@@ -141,7 +110,7 @@ end
 					end
 				end
 			end
-			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") or target:DoesHaveModifier("modifier_item_orchid_malevolence")  then
+			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
 			if not slow then
@@ -149,7 +118,7 @@ end
 			elseif slow then
 				me:Follow(me)
 			end
-			sleep = tick + 350
+			sleep = tick + 300
 		end
 	end
 
