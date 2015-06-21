@@ -40,7 +40,6 @@ function Main(tick)
 		end
 	end
 
-end
 
 if ScriptConfig.Hotkey and tick > sleep then
 	target = targetFind:GetClosestToMouse(100)
@@ -122,7 +121,7 @@ if ScriptConfig.Hotkey and tick > sleep then
 		sleep = tick + 300
 	end
 end
-
+end
 
 function Load()
 	if PlayingGame() then
