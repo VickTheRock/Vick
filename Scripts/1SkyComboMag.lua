@@ -40,6 +40,7 @@ function Main(tick)
 		end
 	end
 
+
 	if ScriptConfig.Hotkey and tick > sleep then
 		target = targetFind:GetClosestToMouse(100)
 		if target and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
@@ -65,7 +66,7 @@ function Main(tick)
 			if E and E:CanBeCasted() and me:CanCast() and not linkens  then
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target})
 			end
-			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") then
+			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
 			if shiva and shiva:CanBeCasted() and distance <= 600 then
@@ -98,11 +99,11 @@ function Main(tick)
 			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and soulring and soulring:CanBeCasted() then
 				table.insert(castQueue,{100,soulring})
 			end
-			if (ScriptConfig.Ult or target:IsStunned()) and target:FindModifier("modifier_skywrath_mage_concussive_shot_slow") and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") and R and R:CanBeCasted() and me:CanCast() then
+			if (ScriptConfig.Ult or target:IsStunned()) and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") and target:FindModifier("modifier_skywrath_mage_concussive_shot_slow") and R and R:CanBeCasted() and me:CanCast() then
 				local CP = R:FindCastPoint()
 				local speed =1200  
 				local distance = GetDistance2D(target, me)
-				local delay =600+client.latency
+				local delay =150+client.latency
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 					if xyz and distance <= 1200  then  
 						me:SafeCastAbility(R, xyz)
@@ -110,15 +111,15 @@ function Main(tick)
 					end
 				end
 			end
-			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
+			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal")  then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
 			if not slow then
 				me:Attack(target)
 			elseif slow then
-				me:Follow(me)
+				me:Follow(target)
 			end
-			sleep = tick + 300
+			sleep = tick + 200
 		end
 	end
 
