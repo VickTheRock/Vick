@@ -43,7 +43,7 @@ function Main(tick)
 	if ScriptConfig.Hotkey and tick > sleep then
 		target = targetFind:GetClosestToMouse(100)
 		if target and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
-			local Q, W, E, R = me:GetAbility(1), me:GetAbility(2), me:GetAbility(3), me:GetAbility(6)
+			local Q, W, E, R, D = me:GetAbility(1), me:GetAbility(2), me:GetAbility(3), me:GetAbility(6),  me:GetAbility(5)
 			local distance = GetDistance2D(target,me)
 			local attackRange = me.attackRange	
 			local urn = me:FindItem("item_urn_of_shadows")
@@ -110,6 +110,13 @@ function Main(tick)
 			end
 			if (ScriptConfig.Ult) and R and R:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target})
+			end
+			if D and D:CanBeCasted() then
+				for i,v in ipairs(entityList:GetEntities(function (v) return (v.type == LuaEntity.TYPE_HERO and not v:IsIllusion() and v.alive and v.team == me.team and me:GetDistance2D(v) <= 2000) end)) do
+					if (math.max(math.abs(FindAngleR(me) - math.rad(FindAngleBetween(me, v))) - 0.20, 0)) == 0 and target:GetDistance2D(v) >= 550 then
+						table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D,target})
+					end	
+				end
 			end
 			if satanic and satanic:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+300  and not inv then
 				table.insert(castQueue,{100,satanic})
