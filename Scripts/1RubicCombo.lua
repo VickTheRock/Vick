@@ -12,8 +12,9 @@ ScriptConfig:SetExtention(-.3)
 ScriptConfig:SetVisible(false)
 
 ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
-ScriptConfig:AddParam("KeyD","StealSpell",SGC_TYPE_TOGGLE,false,true,nil)
+ScriptConfig:AddParam("KeyD","UseStealSpell",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Blink","UseBlink",SGC_TYPE_TOGGLE,false,true,nil)
+ScriptConfig:AddParam("UseR","UseUltR",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Soul","Soul Ring",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Arcan","Arcan",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("dagOn","Dagon",SGC_TYPE_TOGGLE,false,true,nil)
@@ -44,7 +45,7 @@ function Main(tick)
 	if ScriptConfig.Hotkey and tick > sleep then
 		target = targetFind:GetClosestToMouse(100)
 		if target and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
-			local Q, W, D = me:GetAbility(1), me:GetAbility(3), me:GetAbility(5)
+			local Q, W, D, R = me:GetAbility(1), me:GetAbility(3), me:GetAbility(5), me:GetAbility(7)
 			local distance = GetDistance2D(target,me)
 			local dagon = me:FindDagon()
 			local ethereal = me:FindItem("item_ethereal_blade")
@@ -79,6 +80,9 @@ function Main(tick)
 			if Q and Q:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target})
 			end
+			if Q and Q:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_rubick_telekinesis") then
+				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target.position})
+			end
 			if (ScriptConfig.KeyD) and distance <= 325 and D and D:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D})
 			end
@@ -105,6 +109,9 @@ function Main(tick)
 			end
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
+			end
+			if ScriptConfig.UseR and R and R:CanBeCasted() and me:CanCast() and D then
+				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target})
 			end
 			if not slow then
 				me:Attack(target)
