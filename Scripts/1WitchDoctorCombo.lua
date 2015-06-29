@@ -17,9 +17,9 @@ ScriptConfig:AddParam("Ult","Ult",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Blink","UseBlink",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Soul","Soul Ring",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Arcan","Arcan",SGC_TYPE_TOGGLE,false,true,nil)
-ScriptConfig:AddParam("dagOn","Dagon",SGC_TYPE_TOGGLE,false,true,nil)
 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
+local ComboKey = ScriptConfig.Hotkey
 
 function Main(tick)
     if not PlayingGame() then return end
@@ -47,7 +47,6 @@ function Main(tick)
 		if target and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
 			local Q, W, E, R = me:GetAbility(1), me:GetAbility(2), me:GetAbility(3), me:GetAbility(4)
 			local distance = GetDistance2D(target,me)
-			local dagon = me:FindDagon()
 			local ethereal = me:FindItem("item_ethereal_blade")
 			local veil = me:FindItem("item_veil_of_discord")
 			local atos = me:FindItem("item_rod_of_atos")
@@ -58,6 +57,7 @@ function Main(tick)
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
 			local arcane = me:FindItem("item_arcane_boots")
 			local blink = me:FindItem("item_blink")
+			local bkb = me:FindItem("item_black_king_bar")
 			local linkens = target:IsLinkensProtected()
 			local shadowblade = me:FindItem("item_invis_sword") or me:FindItem("item_silver_edge")
 			local glimmer = me:FindItem("item_glimmer_cape")
@@ -68,16 +68,14 @@ function Main(tick)
 			if (ScriptConfig.Blink) and GetDistance2D(me,target) <= RangeBlink and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+500 and not blink.abilityPhase and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
-			if E and E:CanBeCasted() and me:CanCast() or target:IsStunned() and not target:DoesHaveModifier("modifier_witch_doctor_death_ward") then 
+			if E and E:CanBeCasted() and me:CanCast() or target:IsStunned() and not R.abilityPhase then 
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target.position})
 			end
-			if medall and medall:CanBeCasted() and me:CanCast() and not target:DoesHaveModifier("modifier_witch_doctor_death_ward") then
+			if medall and medall:CanBeCasted() and me:CanCast() and SleepCheck("allcast")  then
 				table.insert(castQueue,{1000+math.ceil(medall:FindCastPoint()*1000),medall,target})
+				Sleep(11000+client.latency,"allcast")	
 			end
-			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
-				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
-			end
-			if shiva and shiva:CanBeCasted() and distance <= 600 and not target:DoesHaveModifier("modifier_witch_doctor_death_ward") then
+			if shiva and shiva:CanBeCasted() and distance <= 600 and not me:DoesHaveModifier("modifier_witch_doctor_death_ward") then
 				table.insert(castQueue,{100,shiva})
 			end
 			if R and R:CanBeCasted() and me:CanCast()  and target:DoesHaveModifier("modifier_maledict") then  
@@ -127,11 +125,8 @@ function Main(tick)
 			if me.mana < me.maxMana*0.5 and ScriptConfig.Arcan and arcane and arcane:CanBeCasted()and not me:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
 				table.insert(castQueue,{100,arcane})
 			end
-			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and me.health/me.maxHealth > 0.4 and soulring and soulring:CanBeCasted()and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
+			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and me.health/me.maxHealth > 0.4 and soulring and soulring:CanBeCasted()and not me:DoesHaveModifier("modifier_witch_doctor_death_ward") then
 				table.insert(castQueue,{100,soulring})
-			end
-			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_maledict") then
-				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
 		end
 	end
