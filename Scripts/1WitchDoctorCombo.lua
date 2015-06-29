@@ -102,7 +102,7 @@ function Main(tick)
 			if orchid and orchid:CanBeCasted() and me:CanCast()  then
 				table.insert(castQueue,{math.ceil(orchid:FindCastPoint()*1000),orchid,target})
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
+			if Q and Q:CanBeCasted() and me:CanCast()  then
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target})
 			end
 			if atos and atos:CanBeCasted() and me:CanCast()  and SleepCheck("allcast")   then
