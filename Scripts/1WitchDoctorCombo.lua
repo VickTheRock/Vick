@@ -1,4 +1,4 @@
---[[Use BKB only more 3 target. Radius 900.]] 
+
 require("libs.Utils")
 require("libs.TargetFind")
 require("libs.HotkeyConfig2")
