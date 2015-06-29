@@ -19,7 +19,6 @@ ScriptConfig:AddParam("Soul","Soul Ring",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Arcan","Arcan",SGC_TYPE_TOGGLE,false,true,nil)
 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
-local ComboKey = ScriptConfig.Hotkey
 
 function Main(tick)
     if not PlayingGame() then return end
