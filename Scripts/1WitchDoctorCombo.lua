@@ -18,7 +18,6 @@ ScriptConfig:AddParam("Blink","UseBlink",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Soul","Soul Ring",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Arcan","Arcan",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("dagOn","Dagon",SGC_TYPE_TOGGLE,false,true,nil)
-ScriptConfig:AddParam("BkB","BkB",SGC_TYPE_TOGGLE,false,true,nil)
 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
 local ComboKey = ScriptConfig.Hotkey
@@ -67,7 +66,6 @@ function Main(tick)
 			local amulet = me:FindItem("item_shadow_amulet")
 			local attackRange = me.attackRange	
 			local RangeBlink = 1800
-			local bkb = me:FindItem("item_black_king_bar")
 			if (ScriptConfig.Blink) and GetDistance2D(me,target) <= RangeBlink and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+500 and not blink.abilityPhase and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
@@ -135,17 +133,6 @@ function Main(tick)
 			end
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_maledict") then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
-			end
-			if ScriptConfig.BkB and bkb and bkb:CanBeCasted() and not target:DoesHaveModifier("modifier_witch_doctor_death_ward") then
-				local heroes = entityList:GetEntities(function (v) return v.type==LuaEntity.TYPE_HERO and me:GetDistance2D(v) <= 900 and v.alive and v.visible and v.team~=me.team end)
-				if #heroes == 3 then
-					table.insert(castQueue,{100,bkb})
-				elseif #heroes == 4 then
-					table.insert(castQueue,{100,bkb})
-				elseif #heroes == 5 then
-					table.insert(castQueue,{100,bkb})
-					return
-				end
 			end
 			sleep = tick + 150
 		end
