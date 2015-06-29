@@ -15,8 +15,7 @@ ScriptConfig:SetVisible(false)
 ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
 ScriptConfig:AddParam("Ult","Ult",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Blink","UseBlink",SGC_TYPE_TOGGLE,false,true,nil)
-ScriptConfig:AddParam("Soul","Soul Ring",SGC_TYPE_TOGGLE,false,true,nil)
-ScriptConfig:AddParam("Arcan","Arcan",SGC_TYPE_TOGGLE,false,true,nil)
+
 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
 
@@ -46,15 +45,12 @@ function Main(tick)
 		if target and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
 			local Q, W, E, R = me:GetAbility(1), me:GetAbility(2), me:GetAbility(3), me:GetAbility(4)
 			local distance = GetDistance2D(target,me)
-			local ethereal = me:FindItem("item_ethereal_blade")
 			local veil = me:FindItem("item_veil_of_discord")
 			local atos = me:FindItem("item_rod_of_atos")
 			local shiva = me:FindItem("item_shivas_guard")
 			local orchid = me:FindItem("item_orchid")
 			local sheep = me:FindItem("item_sheepstick")
-			local soulring = me:FindItem("item_soul_ring")
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
-			local arcane = me:FindItem("item_arcane_boots")
 			local blink = me:FindItem("item_blink")
 			local bkb = me:FindItem("item_black_king_bar")
 			local linkens = target:IsLinkensProtected()
@@ -100,32 +96,24 @@ function Main(tick)
 					end
 				end
 			end
-			if sheep and sheep:CanBeCasted() and me:CanCast() and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
+			if sheep and sheep:CanBeCasted() and me:CanCast()  then
 				table.insert(castQueue,{math.ceil(sheep:FindCastPoint()*800),sheep,target})
 			end
-			if orchid and orchid:CanBeCasted() and me:CanCast() and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
+			if orchid and orchid:CanBeCasted() and me:CanCast()  then
 				table.insert(castQueue,{math.ceil(orchid:FindCastPoint()*1000),orchid,target})
 			end
 			if Q and Q:CanBeCasted() and me:CanCast() and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target})
 			end
-			if ethereal and ethereal:CanBeCasted() and me:CanCast() and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
-				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
-			end
-			if atos and atos:CanBeCasted() and me:CanCast() and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
+			if atos and atos:CanBeCasted() and me:CanCast()  and SleepCheck("allcast")   then
 				table.insert(castQueue,{math.ceil(atos:FindCastPoint()*1000),atos,target})
+					Sleep(11000+client.latency,"allcast")
 			end
 			if W and W:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not me:DoesHaveModifier("modifier_voodoo_restoration_heal") then
 				table.insert(castQueue,{100,W})
 			end
 			if veil and veil:CanBeCasted() and me:CanCast() and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
 				table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
-			end
-			if me.mana < me.maxMana*0.5 and ScriptConfig.Arcan and arcane and arcane:CanBeCasted()and not me:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
-				table.insert(castQueue,{100,arcane})
-			end
-			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and me.health/me.maxHealth > 0.4 and soulring and soulring:CanBeCasted()and not me:DoesHaveModifier("modifier_witch_doctor_death_ward") then
-				table.insert(castQueue,{100,soulring})
 			end
 		end
 	end
