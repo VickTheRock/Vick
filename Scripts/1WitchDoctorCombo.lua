@@ -90,7 +90,7 @@ function Main(tick)
 				return
 				end
 				if (shadowblade and shadowblade.cd == 0) or (glimmer and glimmer:CanBeCasted()) then
-					if glimmer then
+					if glimmer and R.abilityPhase then
 							me:CastAbility(glimmer,me)
 						activated = 1
 						sleepTick = GetTick() + 500
