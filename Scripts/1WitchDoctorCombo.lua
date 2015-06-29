@@ -14,7 +14,6 @@ ScriptConfig:SetVisible(false)
 
 ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
 ScriptConfig:AddParam("Ult","Ult",SGC_TYPE_TOGGLE,false,true,nil)
-ScriptConfig:AddParam("Blink","UseBlink",SGC_TYPE_TOGGLE,false,true,nil)
 
 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
@@ -51,7 +50,6 @@ function Main(tick)
 			local orchid = me:FindItem("item_orchid")
 			local sheep = me:FindItem("item_sheepstick")
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
-			local blink = me:FindItem("item_blink")
 			local bkb = me:FindItem("item_black_king_bar")
 			local linkens = target:IsLinkensProtected()
 			local shadowblade = me:FindItem("item_invis_sword") or me:FindItem("item_silver_edge")
@@ -60,9 +58,7 @@ function Main(tick)
 			local amulet = me:FindItem("item_shadow_amulet")
 			local attackRange = me.attackRange	
 			local RangeBlink = 1800
-			if (ScriptConfig.Blink) and GetDistance2D(me,target) <= RangeBlink and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+500 and not blink.abilityPhase and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
-				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
-			end
+			
 			if E and E:CanBeCasted() and me:CanCast() or target:IsStunned() and not R.abilityPhase then 
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target.position})
 			end
@@ -70,7 +66,7 @@ function Main(tick)
 				table.insert(castQueue,{1000+math.ceil(medall:FindCastPoint()*1000),medall,target})
 				Sleep(11000+client.latency,"allcast")	
 			end
-			if shiva and shiva:CanBeCasted() and distance <= 600 and not me:DoesHaveModifier("modifier_witch_doctor_death_ward") then
+			if shiva and shiva:CanBeCasted() and distance <= 600 then
 				table.insert(castQueue,{100,shiva})
 			end
 			if R and R:CanBeCasted() and me:CanCast()  and target:DoesHaveModifier("modifier_maledict") then  
@@ -105,9 +101,9 @@ function Main(tick)
 			if Q and Q:CanBeCasted() and me:CanCast()  then
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target})
 			end
-			if atos and atos:CanBeCasted() and me:CanCast()  and SleepCheck("allcast")   then
+			if atos and atos:CanBeCasted() and me:CanCast() and SleepCheck("allcast") then
 				table.insert(castQueue,{math.ceil(atos:FindCastPoint()*1000),atos,target})
-					Sleep(11000+client.latency,"allcast")
+					Sleep(10500+client.latency,"allcast")
 			end
 			if W and W:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not me:DoesHaveModifier("modifier_voodoo_restoration_heal") then
 				table.insert(castQueue,{100,W})
