@@ -44,6 +44,8 @@ function Main(tick)
 			local Q, W, R = me:GetAbility(1), me:GetAbility(2), me:GetAbility(4)
 			local distance = GetDistance2D(target,me)
 			local attackRange = me.attackRange	
+			local bkb = me:FindItem("item_black_king_bar")
+			local mail = me:FindItem("item_blade_mail")
 			local halberd = me:FindItem("item_heavens_halberd")
 			local abyssal = me:FindItem("item_abyssal_blade")
 			local ethereal = me:FindItem("item_ethereal_blade")
@@ -107,6 +109,28 @@ function Main(tick)
 			if stick and stick:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 then
 				table.insert(castQueue,{100,stick})
 			end	
+			if bkb and bkb:CanBeCasted() then
+				local heroes = entityList:GetEntities(function (v) return v.type==LuaEntity.TYPE_HERO and v.alive and v.visible and v.team~=me.team and me:GetDistance2D(v) <= 800 end)
+				if #heroes == 3 then
+					table.insert(castQueue,{100,bkb})
+				elseif #heroes == 4 then
+					table.insert(castQueue,{100,bkb})
+				elseif #heroes == 5 then
+					table.insert(castQueue,{100,bkb})
+				return
+				end
+			end
+			if mail and mail:CanBeCasted() then
+				local heroes = entityList:GetEntities(function (v) return v.type==LuaEntity.TYPE_HERO and v.alive and v.visible and v.team~=me.team and me:GetDistance2D(v) <= 700 end)
+				if #heroes == 3 then
+					table.insert(castQueue,{100,mail})
+				elseif #heroes == 4 then
+					table.insert(castQueue,{100,mail})
+				elseif #heroes == 5 then
+					table.insert(castQueue,{100,mail})
+				return
+				end
+			end
 			if not slow then
 				me:Attack(target)
 			elseif slow then
