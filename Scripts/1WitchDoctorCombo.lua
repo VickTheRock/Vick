@@ -96,7 +96,7 @@ function Main(tick)
 						sleepTick = GetTick() + 500
 						return
 					end
-					if shadowblade then
+					if shadowblade and R.abilityPhase then
 							me:CastAbility(shadowblade) 
 						activated = 1
 						sleepTick = GetTick() + 500
@@ -134,7 +134,6 @@ function Main(tick)
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_maledict") then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
-			sleep = tick + 150
 		end
 	end
 end
