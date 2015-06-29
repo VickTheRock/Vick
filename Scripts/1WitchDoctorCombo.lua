@@ -118,7 +118,7 @@ function Main(tick)
 			if atos and atos:CanBeCasted() and me:CanCast() and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
 				table.insert(castQueue,{math.ceil(atos:FindCastPoint()*1000),atos,target})
 			end
-			if W and W:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+400 then
+			if W and W:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not me:DoesHaveModifier("modifier_voodoo_restoration_heal") then
 				table.insert(castQueue,{100,W})
 			end
 			if veil and veil:CanBeCasted() and me:CanCast() and not target:DoesHaveModifier("modifier_witch_doctor_death_ward")  then
