@@ -1,4 +1,3 @@
-
 require("libs.Utils")
 require("libs.TargetFind")
 require("libs.HotkeyConfig2")
@@ -50,7 +49,6 @@ function Main(tick)
 			local orchid = me:FindItem("item_orchid")
 			local sheep = me:FindItem("item_sheepstick")
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
-			local bkb = me:FindItem("item_black_king_bar")
 			local linkens = target:IsLinkensProtected()
 			local shadowblade = me:FindItem("item_invis_sword") or me:FindItem("item_silver_edge")
 			local glimmer = me:FindItem("item_glimmer_cape")
@@ -58,7 +56,9 @@ function Main(tick)
 			local amulet = me:FindItem("item_shadow_amulet")
 			local attackRange = me.attackRange	
 			local RangeBlink = 1800
-			
+			if Q and Q:CanBeCasted() and me:CanCast() and linkens then
+				me:CastAbility(Q,target)
+			end
 			if E and E:CanBeCasted() and me:CanCast() or target:IsStunned() and not R.abilityPhase then 
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E,target.position})
 			end
