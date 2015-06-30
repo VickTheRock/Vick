@@ -45,6 +45,7 @@ function Main(tick)
 			local distance = GetDistance2D(target,me)
 			local attackRange = me.attackRange	
 			local bkb = me:FindItem("item_black_king_bar")
+			local Eul = me:FindItem("item_cyclone")
 			local mail = me:FindItem("item_blade_mail")
 			local halberd = me:FindItem("item_heavens_halberd")
 			local abyssal = me:FindItem("item_abyssal_blade")
@@ -67,17 +68,26 @@ function Main(tick)
 			if Q and Q:CanBeCasted() and me:CanCast() and linkens then
 				me:CastAbility(Q,target)
 			end
+			if Eul and Eul:CanBeCasted() and me:CanCast() and distance <= 590  then  
+				me:CastAbility(Eul,target)
+				if (W and W.cd == 0)  then
+					me:CastAbility(W,target.position)
+					activated = 1
+					sleepTick = GetTick() + 300
+				return
+				end
+			end
 			if Q and Q:CanBeCasted() and me:CanCast() and not linkens and not me:DoesHaveModifier("modifier_bloodseeker_bloodrage") then 
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,me})
 			end
 			if ethereal and ethereal:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
 			end
-			if W and W:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_bloodseeker_rupture") then
+			if W and W:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_bloodseeker_rupture") and not Eul then
 				local CP = W:FindCastPoint()
 				local speed = 1500  
 				local distance = GetDistance2D(target, me)
-				local delay =10+client.latency
+				local delay =1200+client.latency
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 					if xyz and distance <= 1100  then  
 						me:SafeCastAbility(W, xyz)
@@ -92,7 +102,7 @@ function Main(tick)
 			if halberd and halberd:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(halberd:FindCastPoint()*1000),halberd,target})
 			end
-			if (ScriptConfig.Ult) and R and R:CanBeCasted() and me:CanCast() and not linkens then
+			if (ScriptConfig.Ult) and R and R:CanBeCasted() and me:CanCast() and not linkens  then
 				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target})
 			end
 			if satanic and satanic:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+300 then
