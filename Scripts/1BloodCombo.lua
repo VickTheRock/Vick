@@ -47,6 +47,7 @@ function Main(tick)
 			local bkb = me:FindItem("item_black_king_bar")
 			local Eul = me:FindItem("item_cyclone")
 			local mail = me:FindItem("item_blade_mail")
+			local mail2 = target:FindItem("item_blade_mail")
 			local halberd = me:FindItem("item_heavens_halberd")
 			local abyssal = me:FindItem("item_abyssal_blade")
 			local ethereal = me:FindItem("item_ethereal_blade")
@@ -65,7 +66,7 @@ function Main(tick)
 			if (ScriptConfig.Diffusal) and diffusal and diffusal:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(diffusal:FindCastPoint()*800),diffusal,target})
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and linkens then
+			if Q and Q:CanBeCasted() and me:CanCast() and linkens then  
 				me:CastAbility(Q,target)
 			end
 			if Eul and Eul:CanBeCasted() and me:CanCast() and distance <= 590  then  
@@ -77,7 +78,7 @@ function Main(tick)
 				return
 				end
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and not linkens and not me:DoesHaveModifier("modifier_bloodseeker_bloodrage") then 
+			if Q and Q:CanBeCasted() and me:CanCast() and not me:DoesHaveModifier("modifier_bloodseeker_bloodrage") then 
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,me})
 			end
 			if ethereal and ethereal:CanBeCasted() and me:CanCast() then
@@ -102,7 +103,7 @@ function Main(tick)
 			if halberd and halberd:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(halberd:FindCastPoint()*1000),halberd,target})
 			end
-			if (ScriptConfig.Ult) and R and R:CanBeCasted() and me:CanCast() and not linkens  then
+			if (ScriptConfig.Ult) and R and R:CanBeCasted() and me:CanCast() and not linkens and not mail2 then
 				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target})
 			end
 			if satanic and satanic:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+300 then
