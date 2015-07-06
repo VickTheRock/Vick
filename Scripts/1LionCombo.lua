@@ -58,7 +58,7 @@ function Main(tick)
 			local linkens = target:IsLinkensProtected()
 			if E and E:CanBeCasted() and me:CanCast() and linkens then
 				me:CastAbility(E,target)
-				Sleep(150, "(Insert Sleep Check Name Here)")
+				Sleep(150)
 			end
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
