@@ -44,6 +44,7 @@ function Main(tick)
 			local distance = GetDistance2D(target,me)
 			local attackRange = me.attackRange	
 			local dagon = me:FindDagon()
+			local staff = me:FindItem("item_force_staff")
 			local bkb = me:FindItem("item_black_king_bar")
 			local halberd = me:FindItem("item_heavens_halberd")
 			local ethereal = me:FindItem("item_ethereal_blade")
@@ -68,6 +69,9 @@ function Main(tick)
 			if atos and atos:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(atos:FindCastPoint()*1000),atos,target})
 			end
+			if staff and staff.cd == 0 and staff:CanBeCasted() and IsPanic(me) then
+				me:CastAbility(staff,me)
+			end	
 			if veil and veil:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
 			end
@@ -137,6 +141,31 @@ function Main(tick)
 			sleep = tick + 150
 		end
 	end
+end
+
+function IsPanic(me)
+	return me:DoesHaveModifier("modifier_riki_smoke_screen")
+	or me:DoesHaveModifier("modifier_rod_of_atos_debuff")
+	or me:DoesHaveModifier("modifier_sand_king_epicenter_slow")
+	or me:DoesHaveModifier("modifier_shadow_demon_purge_slow")
+	or me:DoesHaveModifier("modifier_abaddon_frostmourne_debuff")
+	or me:DoesHaveModifier("modifier_antimage_mana_break")
+	or me:DoesHaveModifier("modifier_dark_seer_wall_of_replica")
+	or me:DoesHaveModifier("modifier_drow_ranger_frost_arrows_slow")
+	or me:DoesHaveModifier("modifier_gyrocopter_call_down_slow")
+	or me:DoesHaveModifier("modifier_item_diffusal_blade_slow")
+	or me:DoesHaveModifier("modifier_item_skadi_slow")
+	or me:DoesHaveModifier("modifier_kunkka_torrent_slow")
+	or me:DoesHaveModifier("modifier_magnataur_skewer_slow")
+	or me:DoesHaveModifier("modifier_pudge_meat_hook")
+	or me:DoesHaveModifier("modifier_skeleton_king_reincarnate_slow")
+	or me:DoesHaveModifier("modifier_skywrath_mystic_flare_aura_effect")
+	or me:DoesHaveModifier("modifier_slark_pounce")
+	or me:DoesHaveModifier("modifier_terrorblade_reflection_slow")
+	or me:DoesHaveModifier("modifier_ursa_earthshock")
+	or me:DoesHaveModifier("modifier_wisp_tether_slow")
+	or me:DoesHaveModifier("modifier_huskar_life_break_slow")
+	or me:DoesHaveModifier("modifier_riki_smoke_screen_thinker") 
 end
 
 function Load()
