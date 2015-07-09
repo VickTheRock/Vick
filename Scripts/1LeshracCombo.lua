@@ -105,7 +105,7 @@ function Main(tick)
 			if R and R:CanBeCasted() and me:CanCast() and distance < 450 and not me:DoesHaveModifier("modifier_leshrac_pulse_nova") then
 				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R})
 			end
-			if R and R:CanBeCasted() and me:CanCast() and distance > 450 and me:DoesHaveModifier("modifier_leshrac_pulse_nova") then
+			if R and R:CanBeCasted() and me:CanCast() and distance > 530 and me:DoesHaveModifier("modifier_leshrac_pulse_nova") then
 				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R})
 			end
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() then
