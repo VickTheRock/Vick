@@ -52,6 +52,7 @@ function Main(tick)
 			local abyssal = me:FindItem("item_abyssal_blade")
 			local ethereal = me:FindItem("item_ethereal_blade")
 			local mom = me:FindItem("item_mask_of_madness")
+			local mjollnir = me:FindItem("item_mjollnir")
 			local soulring = me:FindItem("item_soul_ring")
 			local satanic = me:FindItem("item_satanic")
 			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
@@ -83,6 +84,14 @@ function Main(tick)
 			end
 			if ethereal and ethereal:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
+			end
+			if (mjollnir and mjollnir.cd == 0) then
+				if mjollnir and mjollnir then
+						me:CastAbility(mjollnir,me)
+					activated = 1
+					sleepTick = GetTick() + 500
+					return
+				end
 			end
 			if W and W:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_bloodseeker_rupture") and not Eul then
 				local CP = W:FindCastPoint()
