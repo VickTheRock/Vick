@@ -48,7 +48,6 @@ function Main(tick)
 			local attackRange = me.attackRange	
 			local bkb = me:FindItem("item_black_king_bar")
 			local mail = me:FindItem("item_blade_mail")
-			local mail2 = target:FindItem("item_blade_mail")
 			local halberd = me:FindItem("item_heavens_halberd")
 			local abyssal = me:FindItem("item_abyssal_blade")
 			local mom = me:FindItem("item_mask_of_madness")
@@ -80,7 +79,7 @@ function Main(tick)
 							me:CastAbility(W,target)
 						activated = 1
 						sleepTick = GetTick() + 200
-						Sleep(5000,"Time")
+						Sleep(4900,"Time")
 						return
 					end
 				end
