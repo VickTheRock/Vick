@@ -51,6 +51,7 @@ function Main(tick)
 			local shiva = me:FindItem("item_shivas_guard")
 			local urn = me:FindItem("item_urn_of_shadows")
 			local satanic = me:FindItem("item_satanic")
+			local mjollnir = me:FindItem("item_mjollnir")
 			local diffusal = me:FindItem("item_diffusal_blade") or me:FindItem("item_diffusal_blade_2")
 			local wand = me:FindItem("item_magic_wand")
 			local stick = me:FindItem("item_magic_stick")
@@ -89,6 +90,14 @@ function Main(tick)
 			end
 			if halberd and halberd:CanBeCasted() and me:CanCast() and not inv then
 				table.insert(castQueue,{1000+math.ceil(halberd:FindCastPoint()*1000),halberd,target})
+			end
+			if (mjollnir and mjollnir.cd == 0) then
+				if mjollnir and mjollnir then
+						me:CastAbility(mjollnir,me)
+					activated = 1
+					sleepTick = GetTick() + 500
+					return
+				end
 			end
 			if ethereal and ethereal:CanBeCasted() and me:CanCast()  and not inv then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
