@@ -66,7 +66,8 @@ function Main(tick)
 			local linkens = target:IsLinkensProtected()
 			local attackRange = me.attackRange	
 			local RangeBlink = 1500
-			if GetDistance2D(me,target) <= RangeBlink and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange and not blink.abilityPhase then
+			local Fist = 100
+			if GetDistance2D(me,target) <= RangeBlink and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+400 and not blink.abilityPhase then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
 			if diffusal and diffusal:CanBeCasted() and me:CanCast() then
@@ -75,9 +76,9 @@ function Main(tick)
 			if W and W:CanBeCasted() and me:CanCast() then 
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})   				
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") then
+			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and distance <= 110 then
 					table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q})
-				sleep = tick + 10
+				sleep = tick + 50
 			end
 			if distance <= 400 and E and E:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E})
@@ -118,9 +119,6 @@ function Main(tick)
 			if orchid and orchid:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(orchid:FindCastPoint()*1000),orchid,target})
 			end
-			if ethereal and ethereal:CanBeCasted() and me:CanCast() then
-				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
-			end
 			if me.mana < me.maxMana*0.5 and ScriptConfig.Arcan and arcane and arcane:CanBeCasted() then
 				table.insert(castQueue,{100,arcane})
 			end
@@ -131,7 +129,7 @@ function Main(tick)
 				local CP = R:FindCastPoint()
 				local speed = 900  
 				local distance = GetDistance2D(target, me)
-				local delay =10+client.latency
+				local delay =200+client.latency
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 					if xyz and distance <= 1300  then  
 						me:SafeCastAbility(R, xyz)
@@ -140,9 +138,9 @@ function Main(tick)
 			end 
 			if D and D:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_fire_remnant_charge_counter") and me:DoesHaveModifier("modifier_ember_spirit_fire_remnant_timer") and SleepCheck("stopult") then
 				local CP = D:FindCastPoint()
-				local speed = 100  
+				local speed = 900  
 				local distance = GetDistance2D(target, me)
-				local delay =0+client.latency
+				local delay =30+client.latency
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 					if xyz and distance <= 1100  then  
 						me:SafeCastAbility(D, xyz)
@@ -155,7 +153,7 @@ function Main(tick)
 			if not slow then
 				me:Attack(target)
 			elseif slow then
-				me:Follow(me)
+				me:Follow(target)
 			end
 			sleep = tick + 50
 		end
@@ -168,9 +166,8 @@ function Main(tick)
 			if W and W:CanBeCasted() and me:CanCast() then 
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})   				
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") then
+			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and distance <= 110 then
 					table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q})
-				sleep = tick + 10
 			end
 			if not slow then
 				me:Attack(target)
