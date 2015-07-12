@@ -51,8 +51,8 @@ function Main(tick)
 			local abyssal = me:FindItem("item_abyssal_blade")
 			local shiva = me:FindItem("item_shivas_guard")
 			local veil = me:FindItem("item_veil_of_discord")
-			local orchid = me:FindItem("item_orchid")
 			local sheep = me:FindItem("item_sheepstick")
+			local mjollnir = me:FindItem("item_mjollnir")
 			local mom = me:FindItem("item_mask_of_madness")
 			local satanic = me:FindItem("item_satanic")
 			local soulring = me:FindItem("item_soul_ring")
@@ -72,6 +72,14 @@ function Main(tick)
 			end
 			if diffusal and diffusal:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(diffusal:FindCastPoint()*800),diffusal,target})
+			end
+			if (mjollnir and mjollnir.cd == 0) then
+				if mjollnir and mjollnir then
+						me:CastAbility(mjollnir,me)
+					activated = 1
+					sleepTick = GetTick() + 500
+					return
+				end
 			end
 			if W and W:CanBeCasted() and me:CanCast() then 
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})   				
@@ -116,9 +124,6 @@ function Main(tick)
 			if veil and veil:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
 			end
-			if orchid and orchid:CanBeCasted() and me:CanCast() then
-				table.insert(castQueue,{math.ceil(orchid:FindCastPoint()*1000),orchid,target})
-			end
 			if me.mana < me.maxMana*0.5 and ScriptConfig.Arcan and arcane and arcane:CanBeCasted() then
 				table.insert(castQueue,{100,arcane})
 			end
@@ -160,7 +165,7 @@ function Main(tick)
 	end
 	if ScriptConfig.Tie_up and tick > sleep then
 		target = targetFind:GetClosestToMouse(100)
-		if target and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
+		if target and GetDistance2D(target,me) <= 2000 and not target:IsMagicImmune() and target:CanDie() then
 			local Q, W = me:GetAbility(1), me:GetAbility(2)
 			local distance = GetDistance2D(target,me)
 			if W and W:CanBeCasted() and me:CanCast() then 
