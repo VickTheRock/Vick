@@ -62,7 +62,7 @@ function Main(tick)
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
 			if W and W:CanBeCasted() and me:CanCast() and IsSlowMove(target) or target:IsStunned() then
-				local CP = Ц:FindCastPoint()
+				local CP = W:FindCastPoint()
 				local speed = 1500  
 				local distance = GetDistance2D(target, me)
 				local delay =10+client.latency
