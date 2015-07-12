@@ -61,6 +61,7 @@ function Main(tick)
 			local cheese = me:FindItem("item_cheese")
 			local inv = me:DoesHaveModifier("modifier_item_invisibility_edge_windwalk") or me:DoesHaveModifier("modifier_item_silver_edge_windwalk")
 			local attackRange = me.attackRange
+			local medall = me:FindItem("item_medallion_of_courage")
 			local invis = me:FindItem("item_invis_sword") or me:FindItem("item_silver_edge") 
 			local blink = me:FindItem("item_blink")
 			if (ScriptConfig.Blink) and GetDistance2D(me,target) and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+300 and not blink.abilityPhase and not inv then
@@ -71,6 +72,9 @@ function Main(tick)
 			end
 			if ScriptConfig.Urn and urn and urn:CanBeCasted() and me:CanCast() and not inv then
 				table.insert(castQueue,{math.ceil(urn:FindCastPoint()*1000),urn,target})
+			end
+			if medall and medall:CanBeCasted() and me:CanCast() and not inv then
+				table.insert(castQueue,{1000+math.ceil(medall:FindCastPoint()*1000),medall,target})
 			end
 			if abyssal and abyssal:CanBeCasted() and me:CanCast() and not inv then
 				table.insert(castQueue,{math.ceil(abyssal:FindCastPoint()*1000),abyssal,target})
@@ -84,7 +88,7 @@ function Main(tick)
 				local distance = GetDistance2D(target, me)
 				local delay =10+client.latency
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
-					if xyz and distance <= 1100  then  
+					if xyz and distance <= 1400  then  
 						me:SafeCastAbility(Q, xyz)
 				end
 			end 
@@ -100,7 +104,7 @@ function Main(tick)
 			if W and W:CanBeCasted() and me:CanCast() and  me:DoesHaveModifier("modifier_tusk_snowball_movement") and not inv then
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W})        
 			end
-			if distance <= 450 and  E and E:CanBeCasted() and me:CanCast() and  me:DoesHaveModifier("modifier_tusk_snowball_movement") and not inv then
+			if distance <= 350 and  E and E:CanBeCasted() and me:CanCast() and  me:DoesHaveModifier("modifier_tusk_snowball_movement") and not inv then
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E})        
 			end
 			if mom and mom:CanBeCasted() and me:CanCast() and not inv then
