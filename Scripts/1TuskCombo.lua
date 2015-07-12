@@ -143,7 +143,7 @@ function Main(tick)
 			if not slow then
 				me:Attack(target)
 			elseif slow then
-				me:Follow(me)
+				me:Follow(target)
 			end
 			sleep = tick + 100
 		end
