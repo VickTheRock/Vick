@@ -149,7 +149,7 @@ function Main(tick)
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 					if xyz and distance <= 1100  then  
 						me:SafeCastAbility(D, xyz)
-						Sleep(1100+client.latency,"stopult")
+						Sleep(1150+client.latency,"stopult")
 					end
 			end 
 			if dagon and dagon:CanBeCasted() and me:CanCast() then
