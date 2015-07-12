@@ -61,6 +61,7 @@ function Main(tick)
 			local cheese = me:FindItem("item_cheese")
 			local inv = me:DoesHaveModifier("modifier_item_invisibility_edge_windwalk") or me:DoesHaveModifier("modifier_item_silver_edge_windwalk")
 			local attackRange = me.attackRange
+			local invis = me:FindItem("item_invis_sword") or me:FindItem("item_silver_edge") 
 			local blink = me:FindItem("item_blink")
 			if (ScriptConfig.Blink) and GetDistance2D(me,target) and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+300 and not blink.abilityPhase and not inv then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
@@ -79,7 +80,7 @@ function Main(tick)
 			end
 			if Q and Q:CanBeCasted() and me:CanCast() and  me:DoesHaveModifier("modifier_tusk_snowball_movement") and not inv then 
 				local CP = Q:FindCastPoint()
-				local speed = 1500  
+				local speed = 1300  
 				local distance = GetDistance2D(target, me)
 				local delay =10+client.latency
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
@@ -87,6 +88,9 @@ function Main(tick)
 						me:SafeCastAbility(Q, xyz)
 				end
 			end 
+			if invis and invis:CanBeCasted() and me:CanCast() and me.health/me.maxHealth <= 0.2 and distance <= attackRange+600  then
+				table.insert(castQueue,{math.ceil(invis:FindCastPoint()*800),invis})
+			end
 			if ethereal and ethereal:CanBeCasted() and me:CanCast() and not inv then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
 			end
