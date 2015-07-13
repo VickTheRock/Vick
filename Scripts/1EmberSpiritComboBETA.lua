@@ -84,7 +84,7 @@ function Main(tick)
 			if W and W:CanBeCasted() and me:CanCast() then 
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})   				
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and distance <= 100 then
+			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and distance <= 110 then
 					table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q})
 			end
 			if distance <= 400 and E and E:CanBeCasted() and me:CanCast() then
@@ -137,7 +137,7 @@ function Main(tick)
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 					if xyz and distance <= 1300  then  
 						me:SafeCastAbility(R, xyz)
-						Sleep(150+client.latency,"X_x")
+						Sleep(100+client.latency,"X_x")
 					end
 			end 
 			if D and D:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_fire_remnant_charge_counter") and me:DoesHaveModifier("modifier_ember_spirit_fire_remnant_timer") and SleepCheck("stopult") then
@@ -170,7 +170,7 @@ function Main(tick)
 			if W and W:CanBeCasted() and me:CanCast() then 
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})   				
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and distance <= 100 then
+			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and distance <= 110 then
 					table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q})
 			end
 			if not slow then
