@@ -46,7 +46,6 @@ function Main(tick)
 			local Q, W, E, D, R = me:GetAbility(1), me:GetAbility(2), me:GetAbility(3), me:GetAbility(4), me:GetAbility(5)
 			local distance = GetDistance2D(target,me)
 			local dagon = me:FindDagon()
-			local ethereal = me:FindItem("item_ethereal_blade")
 			local halberd = me:FindItem("item_heavens_halberd")
 			local abyssal = me:FindItem("item_abyssal_blade")
 			local shiva = me:FindItem("item_shivas_guard")
@@ -65,8 +64,7 @@ function Main(tick)
 			local blink = me:FindItem("item_blink")
 			local linkens = target:IsLinkensProtected()
 			local attackRange = me.attackRange	
-			local RangeBlink = 1500
-			local Fist = 100
+			local RangeBlink = 1300
 			if GetDistance2D(me,target) <= RangeBlink and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+400 and not blink.abilityPhase then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
