@@ -84,9 +84,8 @@ function Main(tick)
 			if W and W:CanBeCasted() and me:CanCast() then 
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})   				
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and distance <= 110 then
+			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and distance <= 100 then
 					table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q})
-				sleep = tick + 50
 			end
 			if distance <= 400 and E and E:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E})
@@ -171,7 +170,7 @@ function Main(tick)
 			if W and W:CanBeCasted() and me:CanCast() then 
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})   				
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and distance <= 110 then
+			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and distance <= 100 then
 					table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q})
 			end
 			if not slow then
