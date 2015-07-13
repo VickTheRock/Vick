@@ -55,6 +55,7 @@ function Main(tick)
 			local wand = me:FindItem("item_magic_wand")
 			local stick = me:FindItem("item_magic_stick")
 			local cheese = me:FindItem("item_cheese")
+			local attackRange = me.attackRange	
 			local arcane = me:FindItem("item_arcane_boots")
 			if W and W:CanBeCasted() and me:CanCast() and linkens then
 				me:CastAbility(W,target)
