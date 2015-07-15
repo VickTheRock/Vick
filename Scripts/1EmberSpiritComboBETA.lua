@@ -1,3 +1,4 @@
+--<<Fix Q+W. Fix R+D)>>
 require("libs.Utils")
 require("libs.TargetFind")
 require("libs.HotkeyConfig2")
