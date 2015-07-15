@@ -1,4 +1,4 @@
---[[Skript kj2a. Reworked and improved the Vick. USE THE COMBO KEY Ultimate (R)!!!!! ]]
+--<<Skript kj2a. Reworked and improved the Vick. USE THE COMBO KEY Ultimate (R)!!!!! >>
 require("libs.Utils")
 require("libs.TargetFind")
 require("libs.HotkeyConfig2")
