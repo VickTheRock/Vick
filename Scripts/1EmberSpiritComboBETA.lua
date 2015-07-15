@@ -13,8 +13,6 @@ ScriptConfig:SetVisible(false)
 ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
 ScriptConfig:AddParam("Tie_up","Tie up",SGC_TYPE_ONKEYDOWN,false,false,87)
 ScriptConfig:AddParam("Ult","Ult",SGC_TYPE_TOGGLE,false,true,nil)
-ScriptConfig:AddParam("UseAllUlt","UseAllUlt",SGC_TYPE_TOGGLE,false,true,nil)
-ScriptConfig:AddParam("UseOneUlt","UseOneUlt",SGC_TYPE_TOGGLE,false,true,nil)
 
 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
@@ -42,10 +40,15 @@ function Main(tick)
 	
 	if ScriptConfig.Hotkey and tick > sleep then
 		target = targetFind:GetClosestToMouse(100)
-		if target and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
+		if target and GetDistance2D(target,me) <= 2000 then
 			local Q, W, E, D, R = me:GetAbility(1), me:GetAbility(2), me:GetAbility(3), me:GetAbility(4), me:GetAbility(5)
 			local distance = GetDistance2D(target,me)
+			--local distance2 = GetDistance2D(target,creep)
+			local distance3 = GetDistance2D(target,remnEnd)
+			local remnEnd = entityList:GetEntities({"npc_dota_ember_spirit_remnant"})
+			--local creep = entityList:GetEntities({classId=CDOTA_BaseNPC_Creep_Lane,}) or entityList:GetEntities({classId=CDOTA_BaseNPC_Invoker_Forged_Spirit,team=enemyTeam,}) or entityList:GetEntities({classId=CDOTA_Unit_Hero_Beastmaster_Boar,team=enemyTeam,}) or entityList:GetEntities({classId=CDOTA_BaseNPC_Creep_Siege,team=enemyTeam,}) or entityList:GetEntities({classId=CDOTA_Unit_Broodmother_Spiderling,team=enemyTeam,})		
 			local dagon = me:FindDagon()
+			local ethereal = me:FindItem("item_ethereal_blade")
 			local halberd = me:FindItem("item_heavens_halberd")
 			local abyssal = me:FindItem("item_abyssal_blade")
 			local shiva = me:FindItem("item_shivas_guard")
@@ -64,7 +67,7 @@ function Main(tick)
 			local blink = me:FindItem("item_blink")
 			local linkens = target:IsLinkensProtected()
 			local attackRange = me.attackRange	
-			local RangeBlink = 1300
+			local RangeBlink = 1500
 			if GetDistance2D(me,target) <= RangeBlink and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+400 and not blink.abilityPhase then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
@@ -82,10 +85,14 @@ function Main(tick)
 			if W and W:CanBeCasted() and me:CanCast() then 
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})   				
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and distance <= 110 then
+			if Q and Q:CanBeCasted() and me:CanCast() and distance <= 110 and not target:IsMagicImmune() then
+					table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q})
+				sleep = tick + 50
+			end
+			if Q and Q:CanBeCasted() and me:CanCast() and distance <= 400 --[[ and not distance2 <= 380 ]] and not me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and not target:IsMagicImmune() then
 					table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q})
 			end
-			if distance <= 400 and E and E:CanBeCasted() and me:CanCast() then
+			if distance <= 400 and E and E:CanBeCasted() and me:CanCast() and not target:IsMagicImmune() then
 				table.insert(castQueue,{1000+math.ceil(E:FindCastPoint()*1000),E})
 			end
 			if abyssal and abyssal:CanBeCasted() and me:CanCast() then
@@ -118,7 +125,7 @@ function Main(tick)
 			if sheep and sheep:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(sheep:FindCastPoint()*800),sheep,target})
 			end
-			if veil and veil:CanBeCasted() and me:CanCast() then
+			if veil and veil:CanBeCasted() and me:CanCast() and not target:IsMagicImmune() then
 				table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
 			end
 			if me.mana < me.maxMana*0.5 and ScriptConfig.Arcan and arcane and arcane:CanBeCasted() then
@@ -127,28 +134,21 @@ function Main(tick)
 			if me.mana < me.maxMana*0.5 and soulring and soulring:CanBeCasted() then
 				table.insert(castQueue,{100,soulring})
 			end
-			if (ScriptConfig.Ult) and R and R:CanBeCasted() and me:CanCast()and SleepCheck("X_x") then
+			if (ScriptConfig.Ult) and R and R:CanBeCasted() and me:CanCast()--[[ and SleepCheck("X_x")]] and not target:IsMagicImmune() then
 				local CP = R:FindCastPoint()
 				local speed = 900  
 				local distance = GetDistance2D(target, me)
-				local delay =200+client.latency
-				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
-					if xyz and distance <= 1300  then  
-						me:SafeCastAbility(R, xyz)
-						Sleep(100+client.latency,"X_x")
-					end
-			end 
-			if D and D:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_fire_remnant_charge_counter") and me:DoesHaveModifier("modifier_ember_spirit_fire_remnant_timer") and SleepCheck("stopult") then
-				local CP = D:FindCastPoint()
-				local speed = 900  
-				local distance = GetDistance2D(target, me)
-				local delay =30+client.latency
+				local delay =100+client.latency
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 					if xyz and distance <= 1100  then  
-						me:SafeCastAbility(D, xyz)
-						Sleep(1150+client.latency,"stopult")
+						me:SafeCastAbility(R, xyz)
+						--Sleep(100+client.latency,"X_x")
 					end
 			end 
+			if D and D:CanBeCasted() and me:CanCast() and distance3 <= 800 and SleepCheck("X__x") and not me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") then
+					table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),D,target.position})
+					Sleep(500+client.latency,"X__x")
+			end
 			if dagon and dagon:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
@@ -168,13 +168,12 @@ function Main(tick)
 			if W and W:CanBeCasted() and me:CanCast() then 
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target.position})   				
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_ember_spirit_sleight_of_fist_caster") and distance <= 110 then
+			if Q and Q:CanBeCasted() and me:CanCast()  and distance <= 100 then
 					table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q})
 			end
 			if not slow then
 				me:Attack(target)
 			end
-			sleep = tick + 50
 		end
 	end
 end
