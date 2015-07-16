@@ -1,21 +1,22 @@
+
 ♔ Zynox ♔
 Notable Scripts: Tower Range, Camp Informer
 Libraries: EasyHUD, ScreenPosition, ScriptConfig
-https://github.com/Rulfy/ensage-scripts.git
+https://github.com/Rulfy/ensage-scripts.git (MANDATORY)
 
 α Sophylax ω
 Libraries: DrawManager3D, FunctionWheel, HotkeyConfig, SideMessage, SkillShot, TargetFind, TickCounter, Utils, VectorOp
-https://github.com/Rulfy/ensage-wip.git
+https://github.com/Rulfy/ensage-wip.git (MANDATORY)
 
 ♥ Moones ♥
 Notable Scripts: Counter Skills Rework, Cheat Commands, Skillshot Dodger, iMeepo, Axe Blink Ulti
 Libraries: HeroInfo, SkillShot, Animations, AbilityDamage
-https://github.com/Moones/Ensage-scripts.git
+https://github.com/Moones/Ensage-scripts.git (MANDATORY)
 
 ➳ DL ➳
 Notable Scripts: AIO Kill Stealer, Auto Pick, DOTA Range Display, Items Panel, Show Me More, Overlay Information, Show Spawn Box
 Libraries: Res
-https://github.com/DLdota/DeadlyLua.git
+https://github.com/DLdota/DeadlyLua.git (MANDATORY)
 
 ★ Staskkk ★
 Notable Scripts: Timings, Invoker
@@ -39,6 +40,11 @@ https://github.com/Phantometry/Ensage.git
 
 Fodder
 https://github.com/Deadscale/MuhScripts.git
+
+---
+
+VickTheRock
+https://github.com/VickTheRock/Vick.git
 
 Coverman
 https://github.com/TheCoverman/Scripts-Ensage.git 
@@ -66,6 +72,9 @@ https://github.com/iKamus/Ensage.git
 
 raphaelpdc
 https://github.com/raphaelpdc/Ensage.git
+
+ALIEN
+https://github.com/theklausnomi/ALIEN-ENSAGE.git
 
 kj2a
 Libraries: Neutrals
