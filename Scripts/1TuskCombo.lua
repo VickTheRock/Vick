@@ -61,7 +61,7 @@ function Main(tick)
 			local cheese = me:FindItem("item_cheese")
 			local inv = me:DoesHaveModifier("modifier_item_invisibility_edge_windwalk") or me:DoesHaveModifier("modifier_item_silver_edge_windwalk")
 			local attackRange = me.attackRange
-			local medall = me:FindItem("item_medallion_of_courage")
+			local medall = me:FindItem("item_medallion_of_courage")  or me:FindItem("item_solar_crest")
 			local invis = me:FindItem("item_invis_sword") or me:FindItem("item_silver_edge") 
 			local blink = me:FindItem("item_blink")
 			if (ScriptConfig.Blink) and GetDistance2D(me,target) and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+300 and not blink.abilityPhase and not inv then
