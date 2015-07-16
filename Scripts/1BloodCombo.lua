@@ -40,7 +40,7 @@ function Main(tick)
 
 	if ScriptConfig.Hotkey and tick > sleep then
 		target = targetFind:GetClosestToMouse(100)
-		if target and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
+		if target and GetDistance2D(target,me) <= 2000  and not target:IsMagicImmune() and target:CanDie() then
 			local Q, W, R = me:GetAbility(1), me:GetAbility(2), me:GetAbility(4)
 			local distance = GetDistance2D(target,me)
 			local attackRange = me.attackRange	
@@ -112,7 +112,7 @@ function Main(tick)
 			if halberd and halberd:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(halberd:FindCastPoint()*1000),halberd,target})
 			end
-			if (ScriptConfig.Ult) and R and R:CanBeCasted() and me:CanCast() and not linkens and not mail2 then
+			if (ScriptConfig.Ult) and R and R:CanBeCasted() and me:CanCast() and not linkens and not mail2 and not target:DoesHaveModifier("modifier_item_lotus_orb_active") then
 				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target})
 			end
 			if satanic and satanic:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+300 then
