@@ -61,9 +61,10 @@ function Main(tick)
 			local cheese = me:FindItem("item_cheese")
 			local inv = me:DoesHaveModifier("modifier_item_invisibility_edge_windwalk") or me:DoesHaveModifier("modifier_item_silver_edge_windwalk")
 			local attackRange = me.attackRange
-			local medall = me:FindItem("item_medallion_of_courage")  or me:FindItem("item_solar_crest")
+			local medall = me:FindItem("item_medallion_of_courage") or me:FindItem("item_solar_crest")
 			local invis = me:FindItem("item_invis_sword") or me:FindItem("item_silver_edge") 
 			local blink = me:FindItem("item_blink")
+			local TuskSigil = entityList:FindEntities({classId=CDOTA_BaseNPC_Tusk_Sigil,controllable=true,alive=true,visible=true})
 			if (ScriptConfig.Blink) and GetDistance2D(me,target) and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+300 and not blink.abilityPhase and not inv then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
@@ -82,17 +83,17 @@ function Main(tick)
 			if (ScriptConfig.Diffusal) and diffusal and diffusal:CanBeCasted() and me:CanCast() and not inv then
 				table.insert(castQueue,{math.ceil(diffusal:FindCastPoint()*800),diffusal,target})
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and  me:DoesHaveModifier("modifier_tusk_snowball_movement") and not inv then 
+			if Q and Q:CanBeCasted() and me:CanCast() and me:DoesHaveModifier("modifier_tusk_snowball_movement") and not inv then 
 				local CP = Q:FindCastPoint()
 				local speed = 1300  
 				local distance = GetDistance2D(target, me)
-				local delay =10+client.latency
+				local delay =100+client.latency
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 					if xyz and distance <= 1400  then  
 						me:SafeCastAbility(Q, xyz)
 				end
 			end 
-			if invis and invis:CanBeCasted() and me:CanCast() and me.health/me.maxHealth <= 0.2 and distance <= attackRange+600  then
+			if invis and invis:CanBeCasted() and me:CanCast() and me.health/me.maxHealth <= 0.3 and distance <= attackRange+600  then
 				table.insert(castQueue,{math.ceil(invis:FindCastPoint()*800),invis})
 			end
 			if ethereal and ethereal:CanBeCasted() and me:CanCast() and not inv then
@@ -116,7 +117,10 @@ function Main(tick)
 			if halberd and halberd:CanBeCasted() and me:CanCast() and not inv then
 				table.insert(castQueue,{1000+math.ceil(halberd:FindCastPoint()*1000),halberd,target})
 			end
-			if (ScriptConfig.Ult) and R and R:CanBeCasted() and me:CanCast() then
+			if me:DoesHaveModifier("modifier_item_invisibility_edge_windwalk") or me:DoesHaveModifier("modifier_item_silver_edge_windwalk") then
+				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target})
+			end
+			if (ScriptConfig.Ult) and R and R:CanBeCasted() and me:CanCast() and not me:DoesHaveModifier("modifier_item_invisibility_edge_windwalk") or me:DoesHaveModifier("modifier_item_silver_edge_windwalk") then
 				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target})
 			end
 			if D and D:CanBeCasted() then
@@ -132,7 +136,6 @@ function Main(tick)
 			if (ScriptConfig.Cheese) and cheese and cheese:CanBeCasted() and me.health/me.maxHealth <= 0.3 and distance <= attackRange+600 and not inv then
 				table.insert(castQueue,{100,cheese})
 			end	
-			
 			if wand and wand:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not inv then
 				table.insert(castQueue,{100,wand})
 			end	
@@ -140,6 +143,16 @@ function Main(tick)
 			if stick and stick:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not inv then
 				table.insert(castQueue,{100,stick})
 			end	
+			if #TuskSigil > 0 then
+				for i,v in ipairs(TuskSigil) do
+					if v.controllable and v.unitState ~= -1031241196 then
+						local distance = GetDistance2D(v,target)
+						if distance <= 1300 then
+							v:Follow(target)
+						end
+					end
+				end
+			end
 			if not slow then
 				me:Attack(target)
 			elseif slow then
