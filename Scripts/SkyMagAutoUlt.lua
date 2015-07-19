@@ -173,7 +173,7 @@ if  ScriptConfig.Auto then
 		if  R and R:CanBeCasted() and me:CanCast()  then
 			local enemies = entityList:GetEntities(function(v) return v.type == LuaEntity.TYPE_HERO and v.team == me:GetEnemyTeam() and v.visible and not v.illusion and v.alive  end)
 				for i,target in ipairs(enemies)  do
-				if me.mana >= me.maxMana*0.5 and IsSlowMove(target) or target:IsStunned()  and target.health > target.maxHealth*0.3  and not target:IsMagicImmune() and SleepCheck() and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") then
+				if me.mana >= me.maxMana*0.5 and IsSlowMove(target) or target:IsStunned() or target:IsHexed()  and target.health > target.maxHealth*0.3  and not target:IsMagicImmune() and SleepCheck() and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") then
 															local CP = R:FindCastPoint()
 															local speed =1200  
 															local distance = GetDistance2D(target, me)
