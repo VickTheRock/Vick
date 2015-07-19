@@ -47,7 +47,7 @@ castsleep = tick + v[1]
    if ScriptConfig.Hotkey and tick > sleep then
 		target = targetFind:GetClosestToMouse(100)
                 if (target and target.alive and target.health > 0) and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
-                        local Q, W, E = me:GetAbility(1), me:GetAbility(2), me:GetAbility(3)
+                        local Q, W, E, R  = me:GetAbility(1), me:GetAbility(2), me:GetAbility(3) , me:GetAbility(4)
                         local distance = GetDistance2D(target,me)
                         local dagon = me:FindDagon()
                         local ethereal = me:FindItem("item_ethereal_blade")
