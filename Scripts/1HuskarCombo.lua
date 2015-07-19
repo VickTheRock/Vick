@@ -1,4 +1,4 @@
--<<Use auto armlet at your own risk.)>>
+--<<Use auto armlet at your own risk.)>>
 require("libs.Utils")
 require("libs.TargetFind")
 require("libs.HotkeyConfig2")
