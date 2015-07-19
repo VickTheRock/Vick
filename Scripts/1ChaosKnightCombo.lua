@@ -131,7 +131,7 @@ function Main(tick)
 			end
 			if #Illusions > 0 then
 				for i,v in ipairs(Illusions) do
-					if v.controllable and v.unitState ~= -10312 then
+					if v.controllable and v.unitState ~= -1031241196 then
 						local distance = GetDistance2D(v,target)
 						v:Attack(target)
 					end
