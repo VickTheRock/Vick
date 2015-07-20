@@ -15,6 +15,8 @@ ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
 ScriptConfig:AddParam("Ult","Ultimate",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Diffusal","diff",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Cheese","Cheese",SGC_TYPE_TOGGLE,false,true,nil)
+ScriptConfig:AddParam("BkB","BkB",SGC_TYPE_TOGGLE,false,true,nil)
+ScriptConfig:AddParam("Mail","Mail",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("ArmletTogle","ArmletTogle",SGC_TYPE_TOGGLE,false,true,nil)
 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
@@ -118,7 +120,7 @@ function Main(tick)
 			if stick and stick:CanBeCasted() and me.health/me.maxHealth <= 0.3 and distance <= attackRange+600 then
 				table.insert(castQueue,{100,stick})
 			end	
-			if bkb and bkb:CanBeCasted() then
+			if (ScriptConfig.BkB) and bkb and bkb:CanBeCasted() then
 				local heroes = entityList:GetEntities(function (v) return v.type==LuaEntity.TYPE_HERO and v.alive and v.visible and v.team~=me.team and me:GetDistance2D(v) <= 800 end)
 				if #heroes == 3 then
 					table.insert(castQueue,{100,bkb})
@@ -129,7 +131,7 @@ function Main(tick)
 				return
 				end
 			end
-			if mail and mail:CanBeCasted() then
+			if (ScriptConfig.Mail) and mail and mail:CanBeCasted() then
 				local heroes = entityList:GetEntities(function (v) return v.type==LuaEntity.TYPE_HERO and v.alive and v.visible and v.team~=me.team and me:GetDistance2D(v) <= 700 end)
 				if #heroes == 3 then
 					table.insert(castQueue,{100,mail})
