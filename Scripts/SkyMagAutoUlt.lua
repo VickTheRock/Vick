@@ -170,33 +170,80 @@ if  ScriptConfig.Auto then
 		local R = me:GetAbility(4)
 		local E = me:GetAbility(3)
 		local veil = me:FindItem("item_veil_of_discord")
+		local scepter = me:FindItem("item_ultimate_scepter")
 		if  R and R:CanBeCasted() and me:CanCast()  then
 			local enemies = entityList:GetEntities(function(v) return v.type == LuaEntity.TYPE_HERO and v.team == me:GetEnemyTeam() and v.visible and not v.illusion and v.alive  end)
 				for i,target in ipairs(enemies)  do
-				if me.mana >= me.maxMana*0.5 and IsSlowMove(target) or target:IsStunned() or target:IsHexed()  and target.health > target.maxHealth*0.3  and not target:IsMagicImmune() and SleepCheck() and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") then
+				if me.mana >= me.maxMana*0.5 and IsSlowMove(target) or target:IsStunned() or IsStopMove(target) or target:IsHexed() and not NoUse(target) and target.health > target.maxHealth*0.3  and not target:IsMagicImmune() and SleepCheck() and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") then
 															local CP = R:FindCastPoint()
 															local speed =1200  
 															local distance = GetDistance2D(target, me)
-															local delay =client.latency+100
+															local delay = client.latency+100
 															local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 															if veil and veil:CanBeCasted() and me:CanCast() and SleepCheck("allcast1") then
 																me:SafeCastAbility(veil, xyz)
-																Sleep(client.latency+200,"allcast1")
+																Sleep(client.latency,"allcast1")
 															end
 															if E and E:CanBeCasted() and me:CanCast() and SleepCheck("allcast2") then
 																me:SafeCastAbility(E,target)
-																Sleep(client.latency+200,"allcast2")
+																Sleep(client.latency,"allcast2")
 															end
-															if xyz and distance <= 1200 and R:CanBeCasted() and me:CanCast() and SleepCheck("allcast3") then  
+															if xyz and IsSlowMove(target) or target:IsHexed()  and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") and distance <= 1200 and R:CanBeCasted() and me:CanCast() and SleepCheck("allcast3") and not scepter then  
 																me:SafeCastAbility(R,target.position)
-															Sleep(client.latency+3200,"allcast3")
-														end
-											end
-								end		
-					end
-		end
+																	Sleep(client.latency+300,"allcast3")
+															end
+															if (IsStopMove(target) or target:IsStunned()) and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") and not scepter and R and R:CanBeCasted() and me:CanCast() and target.health > target.maxHealth*0.2 and SleepCheck("allcast4") then
+																local CP = R:FindCastPoint()
+																local speed =1200  
+																local distance = GetDistance2D(target, me)
+																local delay = client.latency+50
+																local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
+																	if xyz and distance <= 1200  then  
+																		me:SafeCastAbility(R, xyz)
+																	Sleep(client.latency+300,"allcast4")
+																	end
+															end
+															if xyz and IsSlowMove(target) or target:IsHexed()  and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") and distance <= 1200 and R:CanBeCasted() and me:CanCast() and SleepCheck("allcast3") and scepter then  
+																me:SafeCastAbility(R,target.position)
+																	Sleep(client.latency+1600,"allcast3")
+															end
+															if (IsStopMove(target) or target:IsStunned()) and not target:FindModifier("modifier_skywrath_mystic_flare_aura_effect") and R and R:CanBeCasted() and me:CanCast() and target.health > target.maxHealth*0.2 and SleepCheck("allcast4") and scepter then
+																local CP = R:FindCastPoint()
+																local speed =1200  
+																local distance = GetDistance2D(target, me)
+																local delay = client.latency+50
+																local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
+																	if xyz and distance <= 1200  then  
+																		me:SafeCastAbility(R, xyz)
+																	Sleep(client.latency+1600,"allcast4")
+																	end
+															end
+												end
+									end		
+						end
+			end
 end
 
+function NoUse(target)
+        return  target:DoesHaveModifier("modifier_rune_haste")
+			or target:DoesHaveModifier("modifier_lycan_shapeshift_speed")
+			or target:DoesHaveModifier("modifier_centaur_stampede") 
+end
+
+function IsStopMove(target)
+        return  target:DoesHaveModifier("modifier_crystal_maiden_frostbite_ministun")
+			or target:DoesHaveModifier("modifier_winter_wyvern_winters_curse")
+			or target:DoesHaveModifier("modifier_axe_berserkers_call") 
+			or target:DoesHaveModifier("modifier_legion_commander_duel")
+			or target:DoesHaveModifier("modifier_ember_spirit_searing_chains")
+			or target:DoesHaveModifier("modifier_lone_druid_spirit_bear_entangle_effect")
+			or target:DoesHaveModifier("modifier_naga_siren_ensnare")
+			or target:DoesHaveModifier("modifier_rubick_telekinesis")
+			or target:DoesHaveModifier("modifier_shadow_shaman_shackles")
+			or target:DoesHaveModifier("modifier_storm_spirit_electric_vortex_pull")
+			or target:DoesHaveModifier("modifier_winter_wyvern_cold_embrace")
+			or target:DoesHaveModifier("modifier_bane_fiends_grip")
+end
 
 function IsSlowMove(target)
         return  target:DoesHaveModifier("modifier_item_diffusal_blade_slow")
@@ -210,40 +257,28 @@ function IsSlowMove(target)
                 or target:DoesHaveModifier("modifier_tusk_walrus_punch_slow")
                 or target:DoesHaveModifier("modifier_viper_viper_strike_slow")
                 or target:DoesHaveModifier("modifier_crystal_maiden_freezing_field_slow")
-		or target:DoesHaveModifier("modifier_crystal_maiden_frostbite_ministun")
                 or target:DoesHaveModifier("modifier_drow_ranger_frost_arrows_slow")
-                or target:DoesHaveModifier("modifier_winter_wyvern_winters_curse")
                 or target:DoesHaveModifier("modifier_ghost_frost_attack_slow")
                 or target:DoesHaveModifier("modifier_gyrocopter_call_down_slow")
                 or target:DoesHaveModifier("modifier_huskar_life_break_slow")
                 or target:DoesHaveModifier("modifier_invoker_ice_wall_slow_debuff")
-		or target:DoesHaveModifier("modifier_axe_berserkers_call") 
-		or target:DoesHaveModifier("modifier_legion_commander_duel")
-		or target:DoesHaveModifier("modifier_axe_berserkers_call_armor")
-		or target:DoesHaveModifier("modifier_dazzle_poison_touch")
-		or target:DoesHaveModifier("modifier_earth_spirit_rolling_boulder_slow")
-		or target:DoesHaveModifier("modifier_elder_titan_earth_splitter")
-		or target:DoesHaveModifier("modifier_ember_spirit_searing_chains")
-		or target:DoesHaveModifier("modifier_enchantress_enchant_slow")
-		or target:DoesHaveModifier("modifier_life_stealer_open_wounds")
-		or target:DoesHaveModifier("modifier_lone_druid_spirit_bear_entangle_effect")
-	        or target:DoesHaveModifier("modifier_magnataur_skewer_slow")
-	        or target:DoesHaveModifier("modifier_naga_siren_ensnare")
-		or target:DoesHaveModifier("modifier_night_stalker_void")
-		or target:DoesHaveModifier("modifier_omniknight_degen_aura_effect")
-		or target:DoesHaveModifier("modifier_phantom_assassin_stiflingdagger")
-		or target:DoesHaveModifier("modifier_pugna_decrepify")
-		or target:DoesHaveModifier("modifier_rubick_telekinesis")
-		or target:DoesHaveModifier("modifier_shadow_demon_purge_slow")
-		or target:DoesHaveModifier("modifier_shadow_shaman_shackles")
-		or target:DoesHaveModifier("modifier_storm_spirit_electric_vortex_pull")
-		or target:DoesHaveModifier("modifier_tidehunter_gush")
-		or target:DoesHaveModifier("modifier_tusk_frozen_sigil_aura")
-		or target:DoesHaveModifier("modifier_ursa_earthshock")
-		or target:DoesHaveModifier("modifier_venomancer_venomous_gale")
-		or target:DoesHaveModifier("modifier_warlock_upheaval")
-		or target:DoesHaveModifier("modifier_winter_wyvern_cold_embrace")
-		or target:DoesHaveModifier("modifier_bane_fiends_grip")
+				or target:DoesHaveModifier("modifier_axe_berserkers_call_armor")
+				or target:DoesHaveModifier("modifier_dazzle_poison_touch")
+				or target:DoesHaveModifier("modifier_earth_spirit_rolling_boulder_slow")
+				or target:DoesHaveModifier("modifier_elder_titan_earth_splitter")
+				or target:DoesHaveModifier("modifier_enchantress_enchant_slow")
+				or target:DoesHaveModifier("modifier_life_stealer_open_wounds")
+				or target:DoesHaveModifier("modifier_magnataur_skewer_slow")
+				or target:DoesHaveModifier("modifier_night_stalker_void")
+				or target:DoesHaveModifier("modifier_omniknight_degen_aura_effect")
+				or target:DoesHaveModifier("modifier_phantom_assassin_stiflingdagger")
+				or target:DoesHaveModifier("modifier_pugna_decrepify")
+				or target:DoesHaveModifier("modifier_shadow_demon_purge_slow")
+				or target:DoesHaveModifier("modifier_tidehunter_gush")
+				or target:DoesHaveModifier("modifier_tusk_frozen_sigil_aura")
+				or target:DoesHaveModifier("modifier_ursa_earthshock")
+				or target:DoesHaveModifier("modifier_venomancer_venomous_gale")
+				or target:DoesHaveModifier("modifier_warlock_upheaval")
 end
  
 function Load()
