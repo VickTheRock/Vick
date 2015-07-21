@@ -78,7 +78,7 @@ function Main(tick)
 			if atos and atos:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{math.ceil(atos:FindCastPoint()*1000),atos,target})
 			end
-			if W and W:CanBeCasted() and me:CanCast() and not linkens then
+			if W and W:CanBeCasted() and me:CanCast() and not linkens and not target:IsHexed() then
 				table.insert(castQueue,{1000+math.ceil(W:FindCastPoint()*1000),W,target})
 			end
 			if veil and veil:CanBeCasted() and me:CanCast() then
