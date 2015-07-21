@@ -151,9 +151,6 @@ function Main(tick)
 end
 
 
-
-
-
 function IsPanic(me)
 	return me:DoesHaveModifier("modifier_riki_smoke_screen")
 	or me:DoesHaveModifier("modifier_rod_of_atos_debuff")
