@@ -110,17 +110,6 @@ function Main(tick)
 	end
 end
 
-function CastSpell(spell,victim, isQueued)
-	if spell.state == LuaEntityAbility.STATE_READY then
-		if victim == nil then
-			entityList:GetMyPlayer():UseAbility(spell)
-		elseif isQueued == nil then
-			entityList:GetMyPlayer():UseAbility(spell, victim)
-		else
-			entityList:GetMyPlayer():UseAbility(spell, victim, isQueued)
-		end
-	end
-end
 
 function Load()
 	if PlayingGame() then
