@@ -111,12 +111,12 @@ function Main(tick)
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
-			if distance > 370 and SleepCheck("all") then
+			if distance > 350 and SleepCheck("all") then
 					me:Follow(target)
-				Sleep(client.latency+260,"all")
+				Sleep(client.latency+350,"all")
 			end
 			if distance < 600 and SleepCheck("all") then
-					me:AttackMove(target.position)
+					me:Attack(target)
 				Sleep(client.latency+185,"all")
 			end
 			sleep = tick + 200
