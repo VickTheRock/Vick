@@ -132,8 +132,8 @@ function Mains(tick)
 	local me = entityList:GetMyHero()
 		target = targetFind:GetClosestToMouse(100)	
 	local ID = me.classId if ID ~= myhero then return end
-	local foun = {Vector(-7263,-6747,281)}
-	local foun2 = {Vector(7204,6611,262)}
+	local foun = {Vector(-7263,-6747,398)}
+	local foun2 = {Vector(7204,6611,398)}
 	local D = me:GetAbility(5)
 	local base = entityList:GetEntities({classId = CDOTA_Unit_Fountain,team = meTeam})[1]
 	if me.controllable and me.unitState ~= -1031241196 and me.health/me.maxHealth < 0.3 and not me:DoesHaveModifier("modifier_bloodseeker_rupture") and me.alive    then
