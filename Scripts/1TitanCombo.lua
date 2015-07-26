@@ -41,7 +41,7 @@ function Main(tick)
 
 	if ScriptConfig.Hotkey and tick > sleep then
 		target = targetFind:GetClosestToMouse(100)
-		if target and GetDistance2D(target,me) <= 2700 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
+		if target and GetDistance2D(target,me) <= 2700 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() then
 			local Q, W, R = me:GetAbility(1), me:GetAbility(2), me:GetAbility(5)
 			local distance = GetDistance2D(target,me)
 			local wand = me:FindItem("item_magic_wand")
@@ -57,7 +57,7 @@ function Main(tick)
 			if veil and veil:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
 			end
-			if W and W:CanBeCasted() and me:CanCast() then
+			if W and W:CanBeCasted() and me:CanCast() and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				local CP = W:FindCastPoint()
 				local speed = 1500  
 				local distance = GetDistance2D(target, me)
@@ -74,10 +74,10 @@ function Main(tick)
 			if (ScriptConfig.Cheese) and cheese and cheese:CanBeCasted() and me.health/me.maxHealth <= 0.3 and distance <= attackRange+600 and not inv then
 				table.insert(castQueue,{100,cheese})
 			end	
-			if wand and wand:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not inv then
+			if wand and wand:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not inv and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{100,wand})
 			end	
-			if stick and stick:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not inv then
+			if stick and stick:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not inv and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{100,stick})
 			end	
 			if R and R:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
@@ -100,12 +100,13 @@ function Main(tick)
 	
 	if ScriptConfig.Hotkey2 and tick > sleep then
 		target = targetFind:GetClosestToMouse(100)
-		if target and GetDistance2D(target,me) <= 2700 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
+		if target and GetDistance2D(target,me) <= 2700 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() then
 			local distance = GetDistance2D(target,me)
 			local dagon = me:FindDagon()
+			local R = me:GetAbility(5)
 			local ethereal = me:FindItem("item_ethereal_blade")
 			local halberd = me:FindItem("item_heavens_halberd")
-			local medall = me:FindItem("item_medallion_of_courage")
+			local medall = me:FindItem("item_medallion_of_courage") or me:FindItem("item_solar_crest")
 			local shiva = me:FindItem("item_shivas_guard")
 			local urn = me:FindItem("item_urn_of_shadows")
 			local satanic = me:FindItem("item_satanic")
@@ -124,51 +125,48 @@ function Main(tick)
 			if (ScriptConfig.Blink) and GetDistance2D(me,target) <= RangeBlink and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+300 and not blink.abilityPhase  and not inv then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
-			if diffusal and diffusal:CanBeCasted() and me:CanCast() and not inv then
+			if diffusal and diffusal:CanBeCasted() and me:CanCast() and not inv and not target:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{math.ceil(diffusal:FindCastPoint()*800),diffusal,target})
 			end
-			if medall and medall:CanBeCasted() and me:CanCast()  and not inv then
+			if medall and medall:CanBeCasted() and me:CanCast()  and not inv and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{1000+math.ceil(medall:FindCastPoint()*1000),medall,target})
 			end
-			if shiva and shiva:CanBeCasted() and distance <= 600 then
+			if shiva and shiva:CanBeCasted() and distance <= 600 and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{100,shiva})
 			end
-			if sheep and sheep:CanBeCasted() and me:CanCast()  and not inv then
+			if sheep and sheep:CanBeCasted() and me:CanCast()  and not inv and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{math.ceil(sheep:FindCastPoint()*800),sheep,target})
 			end
-			if mom and mom:CanBeCasted() and me:CanCast() and not inv then
+			if mom and mom:CanBeCasted() and me:CanCast() and not inv and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{1000+math.ceil(mom:FindCastPoint()*1000),mom})        
 			end
-			if halberd and halberd:CanBeCasted() and me:CanCast() and not inv then
+			if halberd and halberd:CanBeCasted() and me:CanCast() and not inv and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{1000+math.ceil(halberd:FindCastPoint()*1000),halberd,target})
 			end
-			if ethereal and ethereal:CanBeCasted() and me:CanCast()  and not inv then
+			if ethereal and ethereal:CanBeCasted() and me:CanCast()  and not inv and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
 			end
-			if urn and urn:CanBeCasted() and me:CanCast() and not inv  then
+			if urn and urn:CanBeCasted() and me:CanCast() and not inv and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{math.ceil(urn:FindCastPoint()*1000),urn,target})
 			end	
-			if satanic and satanic:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+300  and not inv then
+			if satanic and satanic:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+300  and not inv and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{100,satanic})
 			end
 			if (ScriptConfig.Cheese) and cheese and cheese:CanBeCasted() and me.health/me.maxHealth <= 0.3 and distance <= attackRange+600 and not inv then
 				table.insert(castQueue,{100,cheese})
 			end	
-			if wand and wand:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not inv then
+			if wand and wand:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not inv and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{100,wand})
 			end	
-			if stick and stick:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not inv then
+			if stick and stick:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not inv and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{100,stick})
-			end
-			if not slow then
-				me:Attack(target)
-			elseif slow then
-				me:Follow(me)
 			end
 			sleep = tick + 200
 		end
 	end
 end	
+
+
 
 function Load()
 	if PlayingGame() then
