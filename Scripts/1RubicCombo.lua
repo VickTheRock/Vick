@@ -61,7 +61,7 @@ function Main(tick)
 			if (ScriptConfig.Blink) and GetDistance2D(me,target) and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+150 and not blink.abilityPhase and not me:IsInvisible()  then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
-			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") and not me:IsInvisible()  then
+			if dagon and dagon:CanBeCasted() and me:CanCast() and ethereal and not me:IsInvisible()  then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
 			if W and W:CanBeCasted() and me:CanCast()  then
@@ -116,7 +116,7 @@ function Main(tick)
 			if me.mana < me.maxMana*0.5  and soulring and soulring:CanBeCasted()   then
 				table.insert(castQueue,{100,soulring})
 			end
-			if  dagon and dagon:CanBeCasted() and me:CanCast()   then
+			if  dagon and dagon:CanBeCasted() and me:CanCast() and not ethereal  then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
 			if ScriptConfig.UseR and R and R:CanBeCasted() and me:CanCast() and D and not me:IsInvisible()   then
