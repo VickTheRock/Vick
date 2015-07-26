@@ -161,6 +161,11 @@ function Main(tick)
 			if stick and stick:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+600 and not inv and not me:DoesHaveModifier("modifier_elder_titan_echo_stomp") then
 				table.insert(castQueue,{100,stick})
 			end
+			if not slow then
+				me:Attack(target)
+			elseif slow then
+				me:Follow(target)
+			end
 			sleep = tick + 200
 		end
 	end
