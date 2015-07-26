@@ -7,7 +7,7 @@ require("libs.Skillshot")
 ScriptConfig = ConfigGUI:New(script.name)
 script:RegisterEvent(EVENT_KEY, ScriptConfig.Key, ScriptConfig)
 script:RegisterEvent(EVENT_TICK, ScriptConfig.Refresh, ScriptConfig)
-ScriptConfig:SetName("RubikCombo")
+ScriptConfig:SetName("RubickCombo")
 ScriptConfig:SetExtention(-.3)
 ScriptConfig:SetVisible(false)
 
