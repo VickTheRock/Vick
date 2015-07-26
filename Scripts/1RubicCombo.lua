@@ -16,13 +16,8 @@ ScriptConfig:AddParam("KeyD","UseStealSpell",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Blink","UseBlink",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("UseR","UseUltR",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("GoHomeLowHP","GoHomeLowHP",SGC_TYPE_TOGGLE,false,true,nil)
-ScriptConfig:AddParam("Soul","Soul Ring",SGC_TYPE_TOGGLE,false,true,nil)
-ScriptConfig:AddParam("Arcan","Arcan",SGC_TYPE_TOGGLE,false,true,nil)
-ScriptConfig:AddParam("dagOn","Dagon",SGC_TYPE_TOGGLE,false,true,nil)
 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
-local me = entityList:GetMyHero()
-local spell = {}
 
 function Main(tick)
     if not PlayingGame() then return end
@@ -115,13 +110,13 @@ function Main(tick)
 			if veil and veil:CanBeCasted() and me:CanCast()   then
 				table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
 			end
-			if me.mana < me.maxMana*0.5 and ScriptConfig.Arcan and arcane and arcane:CanBeCasted()   then
+			if me.mana < me.maxMana*0.5  and arcane and arcane:CanBeCasted()   then
 				table.insert(castQueue,{100,arcane})
 			end
-			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and soulring and soulring:CanBeCasted()   then
+			if me.mana < me.maxMana*0.5  and soulring and soulring:CanBeCasted()   then
 				table.insert(castQueue,{100,soulring})
 			end
-			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast()   then
+			if  dagon and dagon:CanBeCasted() and me:CanCast()   then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
 			if ScriptConfig.UseR and R and R:CanBeCasted() and me:CanCast() and D and not me:IsInvisible()   then
