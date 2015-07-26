@@ -61,7 +61,7 @@ function Main(tick)
 			if (ScriptConfig.Blink) and GetDistance2D(me,target) and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+150 and not blink.abilityPhase and not me:IsInvisible()  then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
-			if dagon and dagon:CanBeCasted() and me:CanCast() and ethereal and not me:IsInvisible()  then
+			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") and not me:IsInvisible()  then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
 			if W and W:CanBeCasted() and me:CanCast()  then
@@ -86,7 +86,7 @@ function Main(tick)
 			if (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and not IsTargetSpell(spell) and not IsGoHome(spell) and not IsPanick(spell) and not me:IsInvisible()   then
 				table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D,target.position})
 			end
-			if (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and IsPanick(spell) and not IsGoHome(spell) and not IsTargetSpell(spell) and not me:IsInvisible()   then
+			if (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and IsPanick2(spell) and not IsGoHome(spell) and not IsTargetSpell(spell) and not me:IsInvisible()   then
 				table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D,target})
 			end
 			if (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and IsPanick(spell) and not IsGoHome(spell) and not IsTargetSpell(spell) and not me:IsInvisible()   then
@@ -116,7 +116,7 @@ function Main(tick)
 			if me.mana < me.maxMana*0.5  and soulring and soulring:CanBeCasted()   then
 				table.insert(castQueue,{100,soulring})
 			end
-			if  dagon and dagon:CanBeCasted() and me:CanCast() and not ethereal  then
+			if  dagon and dagon:CanBeCasted() and me:CanCast()   then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
 			if ScriptConfig.UseR and R and R:CanBeCasted() and me:CanCast() and D and not me:IsInvisible()   then
@@ -180,6 +180,13 @@ function IsGoHome(spell)
 	end
 end	
 
+function IsPanick2(spell)
+	local me = entityList:GetMyHero() 
+	if me.health/me.maxHealth <= 0.4 and not me:IsInvisible() then
+	return me:FindSpell("tusk_snowball")
+	end
+end
+
 function IsPanick(spell)
 	local me = entityList:GetMyHero() 
 	if me.health/me.maxHealth <= 0.4 and not me:IsInvisible() then
@@ -198,7 +205,6 @@ function IsPanick(spell)
 	or me:FindSpell("sandking_sandstorm")
 	or me:FindSpell("shadow_demon_disruption")
 	or me:FindSpell("treant_naturesguise")
-	or me:FindSpell("tusk_snowball")
 	or me:FindSpell("warlock_shadow_word")
 	or me:FindSpell("weaver_shukuchi")
 	or me:FindSpell("witchdoctor_voodoo_restoration")
