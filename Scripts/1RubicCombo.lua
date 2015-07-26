@@ -15,11 +15,14 @@ ScriptConfig:AddParam("Hotkey","Key",SGC_TYPE_ONKEYDOWN,false,false,68)
 ScriptConfig:AddParam("KeyD","UseStealSpell",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Blink","UseBlink",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("UseR","UseUltR",SGC_TYPE_TOGGLE,false,true,nil)
+ScriptConfig:AddParam("GoHomeLowHP","GoHomeLowHP",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Soul","Soul Ring",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("Arcan","Arcan",SGC_TYPE_TOGGLE,false,true,nil)
 ScriptConfig:AddParam("dagOn","Dagon",SGC_TYPE_TOGGLE,false,true,nil)
 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
+local me = entityList:GetMyHero()
+local spell = {}
 
 function Main(tick)
     if not PlayingGame() then return end
@@ -41,7 +44,8 @@ function Main(tick)
 			return
 		end
 	end
-
+	
+	
 	if ScriptConfig.Hotkey and tick > sleep then
 		target = targetFind:GetClosestToMouse(100)
 		if target and GetDistance2D(target,me) <= 2000 and not target:DoesHaveModifier("modifier_item_blade_mail_reflect") and not target:DoesHaveModifier("modifier_item_lotus_orb_active") and not target:IsMagicImmune() and target:CanDie() then
@@ -55,72 +59,218 @@ function Main(tick)
 			local orchid = me:FindItem("item_orchid")
 			local sheep = me:FindItem("item_sheepstick")
 			local soulring = me:FindItem("item_soul_ring")
-			local slow = target:DoesHaveModifier("modifier_item_ethereal_blade_slow")
 			local arcane = me:FindItem("item_arcane_boots")
 			local blink = me:FindItem("item_blink")
 			local attackRange = me.attackRange	
-			if (ScriptConfig.Blink) and GetDistance2D(me,target) and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange and not blink.abilityPhase then
+			local base = entityList:GetEntities({classId = CDOTA_Unit_Fountain,team = meTeam})[1]
+			if (ScriptConfig.Blink) and GetDistance2D(me,target) and blink and blink:CanBeCasted() and me:CanCast() and distance > attackRange+150 and not blink.abilityPhase and not me:IsInvisible()  then
 				table.insert(castQueue,{1000+math.ceil(blink:FindCastPoint()*1000),blink,target.position})        
 			end
-			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") then
+			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_item_ethereal_blade_slow") and not me:IsInvisible()  then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
-			if target and me.alive then
-				CastSpell(W, target)
+			if W and W:CanBeCasted() and me:CanCast()  then
+				me:SafeCastAbility(W,target)
 			end
-			if shiva and shiva:CanBeCasted() and distance <= 600 then
+			if shiva and shiva:CanBeCasted() and distance <= 600   then
 				table.insert(castQueue,{100,shiva})
 			end
-			if sheep and sheep:CanBeCasted() and me:CanCast() then
+			if sheep and sheep:CanBeCasted() and me:CanCast()   then
 				table.insert(castQueue,{math.ceil(sheep:FindCastPoint()*800),sheep,target})
 			end
-			if orchid and orchid:CanBeCasted() and me:CanCast() then
+			if orchid and orchid:CanBeCasted() and me:CanCast()   then
 				table.insert(castQueue,{math.ceil(orchid:FindCastPoint()*1000),orchid,target})
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() then
+			if Q and Q:CanBeCasted() and me:CanCast() and not IsPanick(spell) then
 				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target})
 			end
-			if Q and Q:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_rubick_telekinesis") then
-				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,target.position})
+			if Q and Q:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_rubick_telekinesis") and SleepCheck("all")  then
+				table.insert(castQueue,{1000+math.ceil(Q:FindCastPoint()*1000),Q,base.position})
+						Sleep(client.latency+700,"all")
 			end
-			if (ScriptConfig.KeyD) and distance <= 325 and D and D:CanBeCasted() and me:CanCast() then
-				table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D})
-			end
-			if (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() then
+			if (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and not IsTargetSpell(spell) and not IsGoHome(spell) and not IsPanick(spell) and not me:IsInvisible()   then
 				table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D,target.position})
 			end
-			if (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() then
+			if (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and IsPanick(spell) and not IsGoHome(spell) and not IsTargetSpell(spell) and not me:IsInvisible()   then
 				table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D,target})
 			end
-			if ethereal and ethereal:CanBeCasted() and me:CanCast() then
+			if (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and IsPanick(spell) and not IsGoHome(spell) and not IsTargetSpell(spell) and not me:IsInvisible()   then
+				table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D})
+			end
+			if (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and IsPanick(spell) and not me:IsInvisible() and not IsTargetSpell(spell)   then
+				table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D,me})
+			end
+			if (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and not IsGoHome(spell) and not IsTargetSpell(spell) and not IsPanick(spell) and not me:IsInvisible()   then
+				table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D,target})
+			end
+			if (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and IsMeSpell(spell) and not IsTargetSpell(spell) and not me:IsInvisible()   then
+				table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D,me})
+			end
+			if ethereal and ethereal:CanBeCasted() and me:CanCast()   then
 				table.insert(castQueue,{math.ceil(ethereal:FindCastPoint()*1000),ethereal,target})
 			end
-			if atos and atos:CanBeCasted() and me:CanCast() then
+			if atos and atos:CanBeCasted() and me:CanCast()   then
 				table.insert(castQueue,{math.ceil(atos:FindCastPoint()*1000),atos,target})
 			end
-			if veil and veil:CanBeCasted() and me:CanCast() then
+			if veil and veil:CanBeCasted() and me:CanCast()   then
 				table.insert(castQueue,{1000+math.ceil(veil:FindCastPoint()*1000),veil,target.position})        
 			end
-			if me.mana < me.maxMana*0.5 and ScriptConfig.Arcan and arcane and arcane:CanBeCasted() then
+			if me.mana < me.maxMana*0.5 and ScriptConfig.Arcan and arcane and arcane:CanBeCasted()   then
 				table.insert(castQueue,{100,arcane})
 			end
-			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and soulring and soulring:CanBeCasted() then
+			if me.mana < me.maxMana*0.5 and ScriptConfig.Soul and soulring and soulring:CanBeCasted()   then
 				table.insert(castQueue,{100,soulring})
 			end
-			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() then
+			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast()   then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
-			if ScriptConfig.UseR and R and R:CanBeCasted() and me:CanCast() and D then
+			if ScriptConfig.UseR and R and R:CanBeCasted() and me:CanCast() and D and not me:IsInvisible()   then
 				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target})
-			end
-			if not slow then
-				me:Attack(target)
-			elseif slow then
-				me:Follow(me)
 			end
 			sleep = tick + 200
 		end
 	end
+end
+
+function Mains(tick)
+    if not SleepCheck() then return end
+	local me = entityList:GetMyHero()
+		target = targetFind:GetClosestToMouse(100)	
+	local ID = me.classId if ID ~= myhero then return end
+	local foun = {Vector(-7263,-6747,281)}
+	local foun2 = {Vector(7204,6611,262)}
+	local D = me:GetAbility(5)
+	local base = entityList:GetEntities({classId = CDOTA_Unit_Fountain,team = meTeam})[1]
+	if me.controllable and me.unitState ~= -1031241196 and me.health/me.maxHealth < 0.3 and not me:DoesHaveModifier("modifier_bloodseeker_rupture") and me.alive    then
+		if me.team == LuaEntity.TEAM_RADIANT then
+		me:Move(foun[1])
+			Sleep(1000)
+		else
+		me:Move(foun2[1])
+			Sleep(1000)
+		end
+	end
+		if (ScriptConfig.GoHomeLowHP) and (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and IsGoHome(spell) and not me:IsInvisible()  and me:GetDistance2D(base) > 600 then
+			table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D,base.position})
+			Sleep(400)
+		end
+		if (ScriptConfig.GoHomeLowHP) and (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and IsGoHome(spell) and not me:IsInvisible() then
+			table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D})
+			Sleep(400)
+		end
+		if (ScriptConfig.GoHomeLowHP) and (ScriptConfig.KeyD) and D and D:CanBeCasted() and me:CanCast() and IsGoHome(spell) and not me:IsInvisible()  then
+			table.insert(castQueue,{1000+math.ceil(D:FindCastPoint()*1000),D,me})
+			Sleep(400)
+		end
+	end
+
+function IsGoHome(spell)
+	local me = entityList:GetMyHero() 
+	if me.health/me.maxHealth < 0.3 and not me:DoesHaveModifier("modifier_bloodseeker_rupture") then
+	return me:FindSpell("antimage_blink")
+	or me:FindSpell("chen_teleport")
+	or me:FindSpell("faceless_void_time_walk")
+	or me:FindSpell("morphling_morph_str")
+	or me:FindSpell("dark_seer_surge")
+	or me:FindSpell("dazzle_shallow_grave")
+	or me:FindSpell("huskar_inner_vitality")
+	or me:FindSpell("invoker_ghost_walk")
+	or me:FindSpell("nyx_assassin_vendetta")
+	or me:FindSpell("queen_blink")
+	or me:FindSpell("omniknight_purification")
+	or me:FindSpell("slark_pounce")
+	or me:FindSpell("weaver_shukuchi")
+	or me:FindSpell("wisp_relocate")
+	or me:FindSpell("magnataur_skewer")
+	end
+end	
+
+function IsPanick(spell)
+	local me = entityList:GetMyHero() 
+	if me.health/me.maxHealth <= 0.4 and not me:IsInvisible() then
+	return me:FindSpell("omniknight_repel")
+	or me:FindSpell("abaddon_aphotic_shield")
+	or me:FindSpell("bounty_hunter_windwalk")
+	or me:FindSpell("clinkz_windwalk")
+	or me:FindSpell("dark_seer_surge")
+	or me:FindSpell("dazzle_shallow_grave")
+	or me:FindSpell("huskar_inner_vitality")
+	or me:FindSpell("invoker_ghost_walk")
+	or me:FindSpell("nyx_assassin_vendetta")
+	or me:FindSpell("puck_phase_shift")
+	or me:FindSpell("omniknight_purification")
+	or me:FindSpell("legion_commander_press")
+	or me:FindSpell("sandking_sandstorm")
+	or me:FindSpell("shadow_demon_disruption")
+	or me:FindSpell("treant_naturesguise")
+	or me:FindSpell("tusk_snowball")
+	or me:FindSpell("warlock_shadow_word")
+	or me:FindSpell("weaver_shukuchi")
+	or me:FindSpell("witchdoctor_voodoo_restoration")
+	end
+end
+
+function IsMeSpell(spell)
+	local me = entityList:GetMyHero()
+	return me:FindSpell("omniknight_repel")
+	or me:FindSpell("abaddon_aphotic_shield")
+	or me:FindSpell("bloodseeker_bloodrage")
+	or me:FindSpell("dazzle_shadow_wave")
+	or me:FindSpell("dark_seer_ion_shell")
+	or me:FindSpell("dark_seer_surge")
+	or me:FindSpell("invoker_alacrity")
+	or me:FindSpell("chakra_magic")
+	or me:FindSpell("lich_frost_armor")
+	or me:FindSpell("magnataur_empower")
+	or me:FindSpell("ogre_magi_bloodlust")
+	or me:FindSpell("omniknight_purification")
+	or me:FindSpell("legion_commander_press")
+end
+ 
+function IsTargetSpell(spell)
+	local me = entityList:GetMyHero()
+	return me:FindSpell("invoker_ghost_walk")
+	or me:FindSpell("abaddon_aphotic_shield")
+	or me:FindSpell("antimage_blink")
+	or me:FindSpell("bloodseeker_bloodrage")
+	or me:FindSpell("clinkz_windwalk")
+	or me:FindSpell("dark_seer_ion_shell")
+	or me:FindSpell("dark_seer_surge")
+	or me:FindSpell("dazzle_shallow_grave")
+	or me:FindSpell("disruptor_glimpse")
+	or me:FindSpell("enigma_demonic_conversion")
+	or me:FindSpell("furion_teleport")
+	or me:FindSpell("Furion_Sprout")
+	or me:FindSpell("furion_wrath_of_nature")
+	or me:FindSpell("huskar_inner_vitality")
+	or me:FindSpell("invoker_alacrity")
+	or me:FindSpell("invoker_ghost_walk")
+	or me:FindSpell("lich_frost_armor")
+	or me:FindSpell("ogre_magi_bloodlust")
+	or me:FindSpell("omniknight_repel")
+	or me:FindSpell("puck_phase_shift")
+	or me:FindSpell("queen_blink")
+	or me:FindSpell("shadow_demon_disruption")
+	or me:FindSpell("shredder_timberchain")
+	or me:FindSpell("naga_siren_song")
+	or me:FindSpell("treant_naturesguise")
+	or me:FindSpell("weaver_shukuchi")
+	or me:FindSpell("oracle_fates_edict")
+	or me:FindSpell("bounty_hunter_wind_walk")
+	or me:FindSpell("lion_spell_mana_drain")
+	or me:FindSpell("maiden_freezing_field")
+	or me:FindSpell("elder_titan_echo_stomp")
+	or me:FindSpell("enigma_blackhole")
+	or me:FindSpell("keeper_illuminate")
+	or me:FindSpell("nevermore_requiemofsouls")
+	or me:FindSpell("sandking_epicenter")
+	or me:FindSpell("sandking_sandstorm")
+	or me:FindSpell("shadowshaman_shackle")
+	or me:FindSpell("warlock_upheaval")
+	or me:FindSpell("witchdoctor_ward")
+	or me:FindSpell("witchdoctor_death_ward")
+	or me:FindSpell("pudge_dismember")
+	or me:FindSpell("bane_fiends_grip")
 end
 
 function Load()
@@ -132,18 +282,8 @@ function Load()
 			play, target, myhero = true, nil, me.classId
 			ScriptConfig:SetVisible(true)
 			script:RegisterEvent(EVENT_TICK, Main)
+			script:RegisterEvent(EVENT_TICK, Mains)
 			script:UnregisterEvent(Load)
-		end
-	end
-end
-function CastSpell(spell,victim, isQueued)
-	if spell.state == LuaEntityAbility.STATE_READY then
-		if victim == nil then
-			entityList:GetMyPlayer():UseAbility(spell)
-		elseif isQueued == nil then
-			entityList:GetMyPlayer():UseAbility(spell, victim)
-		else
-			entityList:GetMyPlayer():UseAbility(spell, victim, isQueued)
 		end
 	end
 end
@@ -154,6 +294,7 @@ function Close()
 	collectgarbage("collect")
 	if play then
 		script:UnregisterEvent(Main)
+		script:UnregisterEvent(Mains)
 		script:RegisterEvent(EVENT_TICK,Load)
 		play = false
 	end
