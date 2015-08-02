@@ -132,11 +132,14 @@ Sleep(me:GetTurnTime(target)*1000, "casting")
                         if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() and target:DoesHaveModifier("modifier_skywrath_mage_ancient_seal") then
                                 table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
                         end
-                        if not slow then
-me:Attack(target)
-                        elseif slow then
-me:Follow(target)
-                        end
+			if distance > 350 and SleepCheck("all") then
+					me:Follow(target)
+				Sleep(client.latency+350,"all")
+			end
+			if distance < 600 and SleepCheck("all") then
+					me:Attack(target)
+				Sleep(client.latency+185,"all")
+			end
 sleep = tick + 300
                 end
         end
