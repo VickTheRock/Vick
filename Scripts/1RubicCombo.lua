@@ -155,12 +155,12 @@ function Main(tick)
 end
 
 function Mains(tick)
-    if not SleepCheck() and ScriptConfig.GoHomeLowHP then return end
+    if ScriptConfig.GoHomeLowHP and not SleepCheck() then return end
 	local me = entityList:GetMyHero()
 	local ID = me.classId if ID ~= myhero then return end
 	foun = {Vector(-7263,-6747,281)}
 	foun2 = {Vector(7204,6611,262)}
-	if me.controllable and me.unitState ~= -1031241196 and me.health/me.maxHealth < 0.5 and not me:DoesHaveModifier("modifier_bloodseeker_rupture") and me.alive then
+	if ScriptConfig.GoHomeLowHP and me.controllable and me.unitState ~= -1031241196 and me.health/me.maxHealth < 0.5 and not me:DoesHaveModifier("modifier_bloodseeker_rupture") and me.alive then
 		if me.team == LuaEntity.TEAM_RADIANT then
 		me:Move(foun[1])
 			Sleep(1000)
