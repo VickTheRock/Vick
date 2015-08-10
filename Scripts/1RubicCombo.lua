@@ -146,7 +146,7 @@ function Main(tick)
 			if ScriptConfig.dagOn and dagon and dagon:CanBeCasted() and me:CanCast() then
 				table.insert(castQueue,{1000+math.ceil(dagon:FindCastPoint()*1000),dagon,target})
 			end
-			if ScriptConfig.UseR and R and R:CanBeCasted() and me:CanCast() and D and not me:IsInvisible()  then
+			if ScriptConfig.UseR and R and R:CanBeCasted() and me:CanCast() and D.abilityPhase and not me:IsInvisible()  then
 				table.insert(castQueue,{1000+math.ceil(R:FindCastPoint()*1000),R,target})
 			end
 			sleep = tick + 200
