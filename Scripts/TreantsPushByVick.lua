@@ -1,5 +1,5 @@
 --<<Treants Micro-control: Beta version. V0.2 Added LastHit>>
---[[thx MazaiPC for uptimized code.]]
+--[[thx MazaiPC for optimized code.]]
 require("libs.Utils")
 require("libs.ScriptConfig")
  
