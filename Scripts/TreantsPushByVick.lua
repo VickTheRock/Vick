@@ -464,14 +464,14 @@ end
 function Load()
         if PlayingGame() then
                 local me = entityList:GetMyHero()
-statusText.visible = true
                 if not me or me.classId ~= CDOTA_Unit_Hero_Furion or not client.connected or client.loading or client.console then
 script:Disable()
                 else
+statusText.visible = true
 play, target, myhero = true, nil, me.classId
-script:RegisterEvent(EVENT_KEY, Key)
 script:RegisterEvent(EVENT_TICK, Main)
 script:RegisterEvent(EVENT_TICK, Denay)
+script:RegisterEvent(EVENT_KEY, Key)
 script:UnregisterEvent(Load)
                 end
         end
@@ -486,8 +486,8 @@ target, myhero = nil, nil
 script:UnregisterEvent(Main)
 script:UnregisterEvent(Denay)
 script:UnregisterEvent(Key)
-script:RegisterEvent(EVENT_TICK,Load)
 statusText.visible = false
+script:RegisterEvent(EVENT_TICK,Load)
 play = false
         end
 end
