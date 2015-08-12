@@ -57,7 +57,7 @@ Vector(6254, 3680, 256)
  
 
  
-local Key = config.Treants
+local KeyUp = config.Treants
 local Treants = false
 local play = false
  
@@ -66,26 +66,26 @@ local play = false
 local x,y = 220,15
 local monitor = client.screenSize.x/1600
 local font = drawMgr:CreateFont("font","Verdana",12,300)
-local statusText = drawMgr:CreateText(x*monitor,y*monitor,0x66FF33FF,"(" .. string.char(Key) .. ")It is time to pushing.",font) statusText.visible = false
+local statusText = drawMgr:CreateText(x*monitor,y*monitor,0x66FF33FF,"(" .. string.char(KeyUp) .. ")It is time to pushing.",font) statusText.visible = false
  
 local me = entityList:GetMyHero()
  
 function Key(msg, code)
- if  not me or me.classId ~= CDOTA_Unit_Hero_Furion then
-    if client.chat or client.console or client.loading then return end
- 
- 
-    if IsKeyDown(Key) then
-Treants = not Treants
- 
-        if Treants then
-statusText.text = "(" ..string.char(Key) .. ") Treants Micro-control is Active"
-Treants = true
+
+    if client.chat or client.console or client.loading then return end 
+
+
+    if IsKeyDown(KeyUp) then 
+        Treants = not Treants
+
+        if Treants  then
+            statusText.text = "(" ..string.char(KeyUp) .. ") Push Treants Active"
+            Treants = true
         else
-statusText.text = "(" ..string.char(Key) .. ") Treants Micro-control is UnActive"
-Treants = false
-			end
-		end
+            statusText.text = "(" ..string.char(KeyUp) .. ") Push Treants UnActive"
+            Treants = false
+        end
+
     end
 end
  
