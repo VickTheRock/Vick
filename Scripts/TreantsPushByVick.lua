@@ -1,380 +1,496 @@
---<<beta version. V:0.1.>>
+--<<Treants Micro-control: Beta version. V0.2 Added LastHit>>
+--[[thx MazaiPC for uptimized code.]]
 require("libs.Utils")
 require("libs.ScriptConfig")
-
-
+ 
+ 
 config = ScriptConfig.new()
 config:SetParameter("Treants", "D", config.TYPE_HOTKEY)
+config:SetParameter("DenyWithTreants", true)
+config:SetParameter("LastHitWithTreants", true)
 config:Load()
-
+ 
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
-local me = entityList:GetMyHero()
 
+ 
+local treantLastHit = config.LastHitWithTreants
+local treantDeny = config.DenyWithTreants
+ 
+local damage = 22
+ 
+local treantsPath = {
+top = { --Data: [1],[2],[3],[4],top511,[5],[6],[7]
+Vector(-6400, -793, 256),
+Vector(-6356, 1141, 256),
+Vector(-6320, 3762, 256),
+Vector(-5300, 5714, 256),
+Vector(-826, 5942, 256),
+Vector(1445, 5807, 256),
+Vector(3473, 5949, 256)
+        },
+top511 = Vector(-3104, 5929, 256),
+       
+mid = { --Data: mid0,[1],[2],[3],[4],[5],[6],mid00
+Vector(-4027, -3532, 137),
+Vector(-2470, -1960, 127),
+Vector(-891, -425, 55),
+Vector(1002, 703, 127),
+Vector(2627, 2193, 127),
+Vector(4382, 3601, 2562)
+        },
+mid00 = Vector(4873, 4274, 256),
+mid0 = Vector(-5589, -5098, 261),
+       
+bot = { --Data: [1],[2],[3],[4],[5],[6],[7],[8],[9],[10]
+Vector(-4077, -6160, 268),
+Vector(-1875, -6125, 127),
+Vector(325, -6217, 256),
+Vector(2532, -6215, 256),
+Vector(4736, -6064, 256),
+Vector(6090, -4318, 256),
+Vector(6180, -2117, 256),
+Vector(6242, 84, 256),
+Vector(6307, 2286, 141),
+Vector(6254, 3680, 256)
+        }
+} --treantsPath: End
+ 
 
-top1 = {Vector(-6400, -793, 256)}
-top2 = {Vector(-6356, 1141, 256)}
-top3 = {Vector(-6320, 3762, 256)}
-top4 = {Vector(-5300, 5714, 256)}
-top511 = {Vector(-3104, 5929, 256)}
-top5 = {Vector(-826, 5942, 256)}
-top6 = {Vector(1445, 5807, 256)}
-top7 = {Vector(3473, 5949, 256)}
-mid00 = {Vector(4873, 4274, 256)}
-mid0 = {Vector(-5589, -5098, 261)}
-mid1 = {Vector(-4027, -3532, 137)}
-mid2 = {Vector(-2470, -1960, 127)}
-mid3 = {Vector(-891, -425, 55)}
-mid4 = {Vector(1002, 703, 127)}
-mid5 = {Vector(2627, 2193, 127)}
-mid6 = {Vector(4382, 3601, 2562)}
-bot1 = {Vector(-4077, -6160, 268)}
-bot2 = {Vector(-1875, -6125, 127)}
-bot3 = {Vector(325, -6217, 256)}
-bot4 = {Vector(2532, -6215, 256)}
-bot5 = {Vector(4736, -6064, 256)}
-bot6 = {Vector(6090, -4318, 256)}
-bot7 = {Vector(6180, -2117, 256)}
-bot8 = {Vector(6242, 84, 256)}
-bot9 = {Vector(6307, 2286, 141)}
-bot10 = {Vector(6254, 3680, 256)}
-
-local KeyUp    = config.Treants
-local Treants      = false
-local play    = false
-
+ 
+local Key = config.Treants
+local Treants = false
+local play = false
+ 
 --~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~--
-
+ 
 local x,y = 220,15
 local monitor = client.screenSize.x/1600
 local font = drawMgr:CreateFont("font","Verdana",12,300)
-local statusText = drawMgr:CreateText(x*monitor,y*monitor,0x66FF33FF,"(" .. string.char(KeyUp) .. ")It is time for pushing.",font) statusText.visible = false
-
-local me = entityList:GetMyHero() 
-
+local statusText = drawMgr:CreateText(x*monitor,y*monitor,0x66FF33FF,"(" .. string.char(Key) .. ")It is time to pushing.",font) statusText.visible = false
+ 
+local me = entityList:GetMyHero()
+ 
 function Key(msg, code)
-
-    if client.chat or client.console or client.loading then return end 
-
-
-    if IsKeyDown(KeyUp) then 
-        Treants = not Treants
-
-        if Treants  then
-            statusText.text = "(" ..string.char(KeyUp) .. ") Push Treants Active"
-            Treants = true
+ if  not me or me.classId ~= CDOTA_Unit_Hero_Furion then
+    if client.chat or client.console or client.loading then return end
+ 
+ 
+    if IsKeyDown(Key) then
+Treants = not Treants
+ 
+        if Treants then
+statusText.text = "(" ..string.char(Key) .. ") Treants Micro-control is Active"
+Treants = true
         else
-            statusText.text = "(" ..string.char(KeyUp) .. ") Push Treants UnActive"
-            Treants = false
-        end
-
+statusText.text = "(" ..string.char(Key) .. ") Treants Micro-control is UnActive"
+Treants = false
+			end
+		end
     end
 end
-
-
+ 
+ 
 function Main(tick)
-	if Treants then
-    if  not SleepCheck() then return end
-	local me = entityList:GetMyHero()
-	local treants = entityList:GetEntities({controllable=true, classId=CDOTA_BaseNPC_Creep,alive = true, visible = true})
-	local ID = me.classId if ID ~= myhero then return end
-	if me.team == LuaEntity.TEAM_RADIANT and SleepCheck("go") then
-			for i,v in ipairs(treants) do
-	if GetDistance2D(me,v) > 580 then
-	local distancetop1 = GetDistance2D(v,top1[1])
-	local distancetop2 = GetDistance2D(v,top2[1])
-	local distancetop3 = GetDistance2D(v,top3[1])
-	local distancetop4 = GetDistance2D(v,top4[1])
-	local distancetop5 = GetDistance2D(v,top5[1])
-	local distancetop511 = GetDistance2D(v,top511[1])
-	local distancetop6 = GetDistance2D(v,top6[1])
-	local distancetop7 = GetDistance2D(v,top7[1])
-	local distancetop8 = GetDistance2D(v,mid00[1])
-	local distancemid0 = GetDistance2D(v,mid0[1])
-	local distancemid1 = GetDistance2D(v,mid1[1])
-	local distancemid2 = GetDistance2D(v,mid2[1])
-	local distancemid3 = GetDistance2D(v,mid3[1])
-	local distancemid4 = GetDistance2D(v,mid4[1])
-	local distancemid5 = GetDistance2D(v,mid5[1])
-	local distancemid6 = GetDistance2D(v,mid6[1])
-	local distancemid00 = GetDistance2D(v,mid00[1])
-	local distancebot1 = GetDistance2D(v,bot1[1])
-	local distancebot2 = GetDistance2D(v,bot2[1])
-	local distancebot3 = GetDistance2D(v,bot3[1])
-	local distancebot4 = GetDistance2D(v,bot4[1])
-	local distancebot5 = GetDistance2D(v,bot5[1])
-	local distancebot6 = GetDistance2D(v,bot6[1])
-	local distancebot7 = GetDistance2D(v,bot7[1])
-	local distancebot8 = GetDistance2D(v,bot8[1])
-	local distancebot9 = GetDistance2D(v,bot9[1])
-	local distancebot10 = GetDistance2D(v,bot10[1])
-	 if distancetop1 < 3660 and distancetop2 > 2190 then
-				v:AttackMove(top1[1])
-				Sleep(1500,"go")
-			end
-		if distancetop2 < 2400 and distancetop3 > 2490 then
-				v:AttackMove(top2[1])
-				Sleep(1500,"go")
-		end
-		if distancetop3 < 2640 and distancetop4 > 2420 then
-				v:AttackMove(top3[1])
-				Sleep(1500,"go")
-		end
-		if distancetop4 < 2340 and distancetop511 > 2280 then
-				v:AttackMove(top4[1])
-				Sleep(1500,"go")
-		end
-		if distancetop511 < 2380 and distancetop5 > 2380 then
-				v:AttackMove(top5[1])
-				Sleep(1500,"go")
-		end
-		if distancetop5 < 2380 and distancetop6 > 2380 then
-				v:AttackMove(top6[1])
-				Sleep(1500,"go")
-		end
-		if distancetop6 < 2680 and distancetop7 > 2380 then
-				v:AttackMove(top7[1])
-				Sleep(1500,"go")
-		end
-		if distancetop7 < 2630 and distancetop8 > 2080 then
-				v:AttackMove(mid00[1])
-				Sleep(1500,"go")
-		end
-		if distancemid1 < 3160 and distancemid2 > 2190 then
-				v:AttackMove(mid1[1])
-				Sleep(1500,"go")
-			end
-		if distancemid2 < 2400 and distancemid3 > 2490 then
-				v:AttackMove(mid2[1])
-				Sleep(1500,"go")
-		end
-		if distancemid3 < 2640 and distancemid4 > 2420 then
-				v:AttackMove(mid3[1])
-				Sleep(1500,"go")
-		end
-		if distancemid4 < 2340 and distancemid5 > 2280 then
-				v:AttackMove(mid4[1])
-				Sleep(1500,"go")
-		end
-		if distancemid5 < 2380 and distancemid6 > 2380 then
-				v:AttackMove(mid5[1])
-				Sleep(1500,"go")
-		end
-		if distancemid6 < 2380 and distancemid00 > 2380 then
-				v:AttackMove(mid6[1])
-				Sleep(1500,"go")
-		end
-		if distancemid00 < 2630 then
-				v:AttackMove(mid00[1])
-				Sleep(1500,"go")
-		end
-		if distancebot1 < 2400 and distancebot2 > 2490 then
-				v:AttackMove(bot1[1])
-				Sleep(1500,"go")
-		end
-		if distancebot2 < 2640 and distancebot3 > 2420 then
-				v:AttackMove(bot2[1])
-				Sleep(1500,"go")
-		end
-		if distancebot3 < 2340 and distancebot4 > 2280 then
-				v:AttackMove(bot3[1])
-				Sleep(1500,"go")
-		end
-		if distancebot4 < 2380 and distancebot5 > 2380 then
-				v:AttackMove(bot4[1])
-				Sleep(1500,"go")
-		end
-		if distancebot5 < 2380 and distancebot6 > 2380 then
-				v:AttackMove(bot5[1])
-				Sleep(1500,"go")
-		end
-		if distancebot6 < 2400 and distancebot7 > 2490 then
-				v:AttackMove(bot6[1])
-				Sleep(1500,"go")
-		end
-		if distancebot7 < 2640 and distancebot8 > 2420 then
-				v:AttackMove(bot7[1])
-				Sleep(1500,"go")
-		end
-		if distancebot8 < 2340 and distancebot9 > 2280 then
-				v:AttackMove(bot8[1])
-				Sleep(1500,"go")
-		end
-		if distancebot9 < 2380 and distancebot10 > 2380 then
-				v:AttackMove(bot9[1])
-				Sleep(1500,"go")
-		end
-		if distancebot10 < 2380 and distancemid00 > 2380 then
-				v:AttackMove(bot10[1])
-				Sleep(1500,"go")
-			end
-		end
-	end
+        if Treants then
+    if client.pause or client.shopOpen or not SleepCheck()  then return end
+     local me = entityList:GetMyHero()   
+       
+        --LASTHITS/DENIES INDEV
+       
+        -- Get visible enemies --
+        local enemies = entityList:GetEntities({type=LuaEntity.TYPE_HERO,visible = true, alive = true, team = me:GetEnemyTeam(),illusion=false})
+        -- Get creeps in range
+        local creeps = entityList:GetEntities({classId=CDOTA_BaseNPC_Creep_Lane,alive=true,visible=true})
+        -- Get visible treants
+        local treants = entityList:GetEntities({classId=CDOTA_BaseNPC_Creep,alive = true,visible = true,controllable=true})
+        -- Get treants damage
+		local me = entityList:GetMyHero()
+        local ID = me.classId if ID ~= myhero then return end
+        if me.team == LuaEntity.TEAM_RADIANT and SleepCheck("go") then
+                        for i,v in ipairs(treants) do
+        if GetDistance2D(me,v) > 580 then
+        local trDistance = {
+top = { --Data: [1],[2],[3],[4],top511,[5],[6],[7],[8]
+GetDistance2D(v,treantsPath.top[1]),
+GetDistance2D(v,treantsPath.top[2]),
+GetDistance2D(v,treantsPath.top[3]),
+GetDistance2D(v,treantsPath.top[4]),
+GetDistance2D(v,treantsPath.top[5]),
+GetDistance2D(v,treantsPath.top[6]),
+GetDistance2D(v,treantsPath.top[7]),
+GetDistance2D(v,treantsPath.mid00[8])
+                },
+top511 = GetDistance2D(v,treantsPath.top511),
+               
+mid = { --Data: mid0,[1],[2],[3],[4],[5],[6],mid00
+GetDistance2D(v,treantsPath.mid[1]),
+GetDistance2D(v,treantsPath.mid[2]),
+GetDistance2D(v,treantsPath.mid[3]),
+GetDistance2D(v,treantsPath.mid[4]),
+GetDistance2D(v,treantsPath.mid[5]),
+GetDistance2D(v,treantsPath.mid[6])
+                },
+mid0 = GetDistance2D(v,treantsPath.mid0),
+mid00 = GetDistance2D(v,treantsPath.mid00),
+               
+bot = { --Data: [1],[2],[3],[4],[5],[6],[7],[8],[9],[10]
+GetDistance2D(v,treantsPath.bot[1]),
+GetDistance2D(v,treantsPath.bot[2]),
+GetDistance2D(v,treantsPath.bot[3]),
+GetDistance2D(v,treantsPath.bot[4]),
+GetDistance2D(v,treantsPath.bot[5]),
+GetDistance2D(v,treantsPath.bot[6]),
+GetDistance2D(v,treantsPath.bot[7]),
+GetDistance2D(v,treantsPath.bot[8]),
+GetDistance2D(v,treantsPath.bot[9]),
+GetDistance2D(v,treantsPath.bot[10])
+                }
+        } --trDistance: End
+       
+
+       if v.alive then
+         if trDistance.top[1] < 3660 and trDistance.top[2] > 2190  then
+v:AttackMove(treantsPath.top[1])
+Sleep(2000,"go")
+                        end
+                if trDistance.top[2] < 2400 and trDistance.top[3] > 2490 then
+v:AttackMove(treantsPath.top[2])
+Sleep(2000,"go")
+                end
+                if trDistance.top[3] < 2640 and trDistance.top[4] > 2420 then
+v:AttackMove(treantsPath.top[3])
+Sleep(2000,"go")
+                end
+                if trDistance.top[4] < 2340 and trDistance.top[5] > 2280 then
+v:AttackMove(treantsPath.top[4])
+Sleep(2000,"go")
+                end
+                if trDistance.top511 < 2380 and trDistance.top[5] > 2380 then
+v:AttackMove(treantsPath.top[5])
+Sleep(2000,"go")
+                end
+                if trDistance.top[5] < 2380 and trDistance.top[6] > 2380 then
+v:AttackMove(treantsPath.top[6])
+Sleep(2000,"go")
+                end
+                if trDistance.top[6] < 2680 and trDistance.top[7] > 2380 then
+v:AttackMove(treantsPath.top[7])
+Sleep(2000,"go")
+                end
+                if trDistance.top[7] < 2630 and trDistance.top[8] > 2080 then
+v:AttackMove(treantsPath.mid00)
+Sleep(2000,"go")
+                end
+                if trDistance.mid[1] < 3160 and trDistance.mid[2] > 2190 then
+v:AttackMove(treantsPath.mid[1])
+Sleep(2000,"go")
+                        end
+                if trDistance.mid[2] < 2400 and trDistance.mid[3] > 2490 then
+v:AttackMove(treantsPath.mid[2])
+Sleep(2000,"go")
+                end
+                if trDistance.mid[3] < 2640 and trDistance.mid[4] > 2420 then
+v:AttackMove(treantsPath.mid[3])
+Sleep(2000,"go")
+                end
+                if trDistance.mid[4] < 2340 and trDistance.mid[5] > 2280 then
+v:AttackMove(treantsPath.mid[4])
+Sleep(2000,"go")
+                end
+                if trDistance.mid[5] < 2380 and trDistance.mid[6] > 2380 then
+v:AttackMove(treantsPath.mid[5])
+Sleep(2000,"go")
+                end
+                if trDistance.mid[6] < 2380 and trDistance.mid00 > 2380 then
+v:AttackMove(treantsPath.mid[6])
+Sleep(2000,"go")
+                end
+                if trDistance.mid00 < 2630 then
+v:AttackMove(treantsPath.mid00)
+Sleep(2000,"go")
+                end
+                if trDistance.bot[1] < 2400 and trDistance.bot[2] > 2490 then
+v:AttackMove(treantsPath.bot[1])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[2] < 2640 and trDistance.bot[3] > 2420 then
+v:AttackMove(treantsPath.bot[2])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[3] < 2340 and trDistance.bot[4] > 2280 then
+v:AttackMove(treantsPath.bot[3])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[4] < 2380 and trDistance.bot[5] > 2380 then
+v:AttackMove(treantsPath.bot[4])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[5] < 2380 and trDistance.bot[6] > 2380 then
+v:AttackMove(treantsPath.bot[5])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[6] < 2400 and trDistance.bot[7] > 2490 then
+v:AttackMove(treantsPath.bot[6])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[7] < 2640 and trDistance.bot[8] > 2420 then
+v:AttackMove(treantsPath.bot[7])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[8] < 2340 and trDistance.bot[9] > 2280 then
+v:AttackMove(treantsPath.bot[8])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[9] < 2380 and trDistance.bot[10] > 2380 then
+v:AttackMove(treantsPath.bot[9])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[10] < 2380 and trDistance.mid00 > 2380 then
+v:AttackMove(treantsPath.bot[10])
+Sleep(2000,"go")
+                        end
+                end
+        end
 end
 if me.team == LuaEntity.TEAM_DIRE and SleepCheck("go") then
-			for i,v in ipairs(treants) do
-	if GetDistance2D(me,v) > 580 then
-	local distancetop1 = GetDistance2D(v,top1[1])
-	local distancetop2 = GetDistance2D(v,top2[1])
-	local distancetop3 = GetDistance2D(v,top3[1])
-	local distancetop4 = GetDistance2D(v,top4[1])
-	local distancetop5 = GetDistance2D(v,top5[1])
-	local distancetop511 = GetDistance2D(v,top511[1])
-	local distancetop6 = GetDistance2D(v,top6[1])
-	local distancetop7 = GetDistance2D(v,top7[1])
-	local distancetop8 = GetDistance2D(v,mid00[1])
-	local distancemid0 = GetDistance2D(v,mid0[1])
-	local distancemid1 = GetDistance2D(v,mid1[1])
-	local distancemid2 = GetDistance2D(v,mid2[1])
-	local distancemid3 = GetDistance2D(v,mid3[1])
-	local distancemid4 = GetDistance2D(v,mid4[1])
-	local distancemid5 = GetDistance2D(v,mid5[1])
-	local distancemid6 = GetDistance2D(v,mid6[1])
-	local distancemid00 = GetDistance2D(v,mid00[1])
-	local distancebot1 = GetDistance2D(v,bot1[1])
-	local distancebot2 = GetDistance2D(v,bot2[1])
-	local distancebot3 = GetDistance2D(v,bot3[1])
-	local distancebot4 = GetDistance2D(v,bot4[1])
-	local distancebot5 = GetDistance2D(v,bot5[1])
-	local distancebot6 = GetDistance2D(v,bot6[1])
-	local distancebot7 = GetDistance2D(v,bot7[1])
-	local distancebot8 = GetDistance2D(v,bot8[1])
-	local distancebot9 = GetDistance2D(v,bot9[1])
-	local distancebot10 = GetDistance2D(v,bot10[1])
-		if distancetop7 < 3660 and distancetop6 > 2190 then
-				v:AttackMove(top7[1])
-				Sleep(1500,"go")
-			end
-		if distancetop6 < 2400 and distancetop5 > 2490 then
-				v:AttackMove(top6[1])
-				Sleep(1500,"go")
-		end
-		if distancetop5 < 2640 and distancetop511 > 2420 then
-				v:AttackMove(top5[1])
-				Sleep(1500,"go")
-		end
-		if distancetop511 < 2340 and distancetop4 > 2280 then
-				v:AttackMove(top4[1])
-				Sleep(1500,"go")
-		end
-		if distancetop4 < 2380 and distancetop3 > 2380 then
-				v:AttackMove(top3[1])
-				Sleep(1500,"go")
-		end
-		if distancetop3 < 2380 and distancetop2 > 2380 then
-				v:AttackMove(top2[1])
-				Sleep(1500,"go")
-		end
-		if distancetop2 < 2680 and distancetop1 > 2380 then
-				v:AttackMove(top1[1])
-				Sleep(1500,"go")
-		end
-		if distancetop1 < 2630 and distancemid0 > 2080 then
-				v:AttackMove(mid0[1])
-				Sleep(1500,"go")
-		end
-		if distancemid00 < 3660 and distancemid6 > 2190 then
-				v:AttackMove(mid6[1])
-				Sleep(1500,"go")
-		end
-		if distancemid6 < 2400 and distancemid5 > 2490 then
-				v:AttackMove(mid5[1])
-				Sleep(1500,"go")
-		end
-		if distancemid5 < 2640 and distancemid4 > 2420 then
-				v:AttackMove(mid4[1])
-				Sleep(1500,"go")
-		end
-		if distancemid4 < 2340 and distancemid3 > 2280 then
-				v:AttackMove(mid3[1])
-				Sleep(1500,"go")
-		end
-		if distancemid3 < 2380 and distancemid2 > 2380 then
-				v:AttackMove(mid2[1])
-				Sleep(1500,"go")
-		end
-		if distancemid2 < 2380 and distancemid1 > 2380 then
-				v:AttackMove(mid1[1])
-				Sleep(1500,"go")
-		end
-		if distancemid1 < 2380 and distancemid0 > 2380 then
-				v:AttackMove(mid0[1])
-				Sleep(1500,"go")
-		end
-		if distancebot10 < 2400 and distancebot9 > 2490 then
-				v:AttackMove(bot10[1])
-				Sleep(1500,"go")
-		end
-		if distancebot9 < 2640 and distancebot8 > 2420 then
-				v:AttackMove(bot9[1])
-				Sleep(1500,"go")
-		end
-		if distancebot8 < 2340 and distancebot7 > 2280 then
-				v:AttackMove(bot8[1])
-				Sleep(1500,"go")
-		end
-		if distancebot7 < 2380 and distancebot6 > 2380 then
-				v:AttackMove(bot7[1])
-				Sleep(1500,"go")
-		end
-		if distancebot6 < 2380 and distancebot5 > 2380 then
-				v:AttackMove(bot6[1])
-				Sleep(1500,"go")
-		end
-		if distancebot5 < 2400 and distancebot4 > 2490 then
-				v:AttackMove(bot5[1])
-				Sleep(1500,"go")
-		end
-		if distancebot4 < 2640 and distancebot3 > 2420 then
-				v:AttackMove(bot4[1])
-				Sleep(1500,"go")
-		end
-		if distancebot3 < 2340 and distancebot2 > 2280 then
-				v:AttackMove(bot3[1])
-				Sleep(1500,"go")
-		end
-		if distancebot2 < 2380 and distancebot1 > 2380 then
-				v:AttackMove(bot2[1])
-				Sleep(1500,"go")
-		end
-		if distancebot1 < 2380 and distancemid0 > 2380 then
-				v:AttackMove(mid0[1])
-				Sleep(1500,"go")
-				end
+                        for i,v in ipairs(treants) do
+        if GetDistance2D(me,v) > 580 then
+       
+        local trDistance = {
+top = { --Data: [1],[2],[3],[4],top511,[5],[6],[7],[8]
+GetDistance2D(v,treantsPath.top[1]),
+GetDistance2D(v,treantsPath.top[2]),
+GetDistance2D(v,treantsPath.top[3]),
+GetDistance2D(v,treantsPath.top[4]),
+GetDistance2D(v,treantsPath.top[5]),
+GetDistance2D(v,treantsPath.top[6]),
+GetDistance2D(v,treantsPath.top[7]),
+GetDistance2D(v,treantsPath.mid00)
+                },
+top511 = GetDistance2D(v,treantsPath.top511),
+               
+mid = { --Data: mid0,[1],[2],[3],[4],[5],[6],mid00
+GetDistance2D(v,treantsPath.mid[1]),
+GetDistance2D(v,treantsPath.mid[2]),
+GetDistance2D(v,treantsPath.mid[3]),
+GetDistance2D(v,treantsPath.mid[4]),
+GetDistance2D(v,treantsPath.mid[5]),
+GetDistance2D(v,treantsPath.mid[6])
+                },
+mid0 = GetDistance2D(v,treantsPath.mid0),
+mid00 = GetDistance2D(v,treantsPath.mid00),
+               
+bot = { --Data: [1],[2],[3],[4],[5],[6],[7],[8],[9],[10]
+GetDistance2D(v,treantsPath.bot[1]),
+GetDistance2D(v,treantsPath.bot[2]),
+GetDistance2D(v,treantsPath.bot[3]),
+GetDistance2D(v,treantsPath.bot[4]),
+GetDistance2D(v,treantsPath.bot[5]),
+GetDistance2D(v,treantsPath.bot[6]),
+GetDistance2D(v,treantsPath.bot[7]),
+GetDistance2D(v,treantsPath.bot[8]),
+GetDistance2D(v,treantsPath.bot[9]),
+GetDistance2D(v,treantsPath.bot[10])
+                }
+        } --trDistance: End
+       
+
+       
+                if trDistance.top[7] < 3660 and trDistance.top[6] > 2190 then
+v:AttackMove(treantsPath.top[7])
+Sleep(2000,"go")
+                        end
+                if trDistance.top[6] < 2400 and trDistance.top[5] > 2490 then
+v:AttackMove(treantsPath.top[6])
+Sleep(2000,"go")
+                end
+                if trDistance.top[5] < 2640 and trDistance.top511 > 2420 then
+v:AttackMove(treantsPath.top[5])
+Sleep(2000,"go")
+                end
+                if trDistance.top511 < 2340 and trDistance.top[4] > 2280 then
+v:AttackMove(treantsPath.top[4])
+Sleep(2000,"go")
+                end
+                if trDistance.top[4] < 2380 and trDistance.top[3] > 2380 then
+v:AttackMove(treantsPath.top[3])
+Sleep(2000,"go")
+                end
+                if trDistance.top[3] < 2380 and trDistance.top[2] > 2380 then
+v:AttackMove(treantsPath.top[2])
+Sleep(2000,"go")
+                end
+                if trDistance.top[2] < 2680 and trDistance.top[1] > 2380 then
+v:AttackMove(treantsPath.top[1])
+Sleep(2000,"go")
+                end
+                if trDistance.top[1] < 2630 and trDistance.mid0 > 2080 then
+v:AttackMove(treantsPath.mid0)
+Sleep(2000,"go")
+                end
+                if trDistance.mid00 < 3660 and trDistance.mid[6] > 2190 then
+v:AttackMove(treantsPath.mid[6])
+Sleep(2000,"go")
+                end
+                if trDistance.mid[6] < 2400 and trDistance.mid[5] > 2490 then
+v:AttackMove(treantsPath.mid[5])
+Sleep(2000,"go")
+                end
+                if trDistance.mid[5] < 2640 and trDistance.mid[4] > 2420 then
+v:AttackMove(treantsPath.mid[4])
+Sleep(2000,"go")
+                end
+                if trDistance.mid[4] < 2340 and trDistance.mid[3] > 2280 then
+v:AttackMove(treantsPath.mid[3])
+Sleep(2000,"go")
+                end
+                if trDistance.mid[3] < 2380 and trDistance.mid[2] > 2380 then
+v:AttackMove(treantsPath.mid[2])
+Sleep(2000,"go")
+                end
+                if trDistance.mid[2] < 2380 and trDistance.mid[1] > 2380 then
+v:AttackMove(treantsPath.mid[1])
+Sleep(2000,"go")
+                end
+                if trDistance.mid[1] < 2380 and trDistance.mid0 > 2380 then
+v:AttackMove(treantsPath.mid0)
+Sleep(2000,"go")
+                end
+                if trDistance.bot[10] < 2400 and trDistance.bot[9] > 2490 then
+v:AttackMove(treantsPath.bot[10])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[9] < 2640 and trDistance.bot[8] > 2420 then
+v:AttackMove(treantsPath.bot[9])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[8] < 2340 and trDistance.bot[7] > 2280 then
+v:AttackMove(treantsPath.bot[8])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[7] < 2380 and trDistance.bot[6] > 2380 then
+v:AttackMove(treantsPath.bot[7])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[6] < 2380 and trDistance.bot[5] > 2380 then
+v:AttackMove(treantsPath.bot[6])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[5] < 2400 and trDistance.bot[4] > 2490 then
+v:AttackMove(treantsPath.bot[5])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[4] < 2640 and trDistance.bot[3] > 2420 then
+v:AttackMove(treantsPath.bot[4])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[3] < 2340 and trDistance.bot[2] > 2280 then
+v:AttackMove(treantsPath.bot[3])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[2] < 2380 and trDistance.bot[1] > 2380 then
+v:AttackMove(treantsPath.bot[2])
+Sleep(2000,"go")
+                end
+                if trDistance.bot[1] < 2380 and trDistance.mid0 > 2380 then
+v:AttackMove(treantsPath.mid0)
+Sleep(2000,"go")
+                                end
+                        end
+                end
 			end
 		end
 	end
 end
+
+ function Denay(tick)
+        if Treants then
+    if client.pause or client.shopOpen or not SleepCheck()  then return end
+    local tr = entityList:GetMyPlayer()
+    local me = entityList:GetMyHero()
+        --LASTHITS/DENIES INDEV
+       
+        -- Get creeps in range
+        local creeps = entityList:GetEntities({classId=CDOTA_BaseNPC_Creep_Lane,alive=true,visible=true}) or entityList:GetEntities({classId=CDOTA_BaseNPC_Tower,alive=true,visible=true}) or entityList:GetEntities({classId=CDOTA_BaseNPC_Creep_Siege,alive=true,visible=true})
+        -- Get visible treants
+		local treants = entityList:GetEntities({classId=CDOTA_BaseNPC_Creep,team=me.team,alive=true,visible=true,controllable = true})
+        -- Get treants damage
+
+        for i,v in ipairs(creeps) do
+		
+                local offset = v.healthbarOffset
+                if offset == -1 then return end
+                if v.visible and v.alive  then
+                        if v.team == entityList:GetMyHero():GetEnemyTeam() and treantLastHit and v.health > 0 and v.health < (damage*(1-v.dmgResist)+20) then
+                                for l,tr in ipairs(treants) do
+                                        if  v:GetDistance2D(tr) <= 600  and SleepCheck(tr.handle) then
+tr:Attack(v)
+Sleep(600,tr.handle)
+                                                break
+                                        end
+                                end
+                        elseif treantDeny and v.health > (damage*(1-v.dmgResist)) and v.health < (damage*(1-v.dmgResist))+48 then
+                                for l,tr in ipairs(treants) do
+                                        if v:GetDistance2D(tr) <= 600  and SleepCheck(tr.handle) then
+tr:Attack(v)
+Sleep(600,tr.handle)
+                                                break
+                                        end
+                                end
+                        end
+                end
+        end
+        for i,v in ipairs(treants) do
+                local offset = v.healthbarOffset
+                if offset == -1 then return end
+                if v.visible and v.alive  then
+                        if treantDeny and v.health > (damage+10*(1-v.dmgResist)) and v.health < (damage+10*(1-v.dmgResist))+48 then
+                                for l,tr in ipairs(treants) do
+                                        if  v:GetDistance2D(tr) <= 600 and SleepCheck(tr.handle)   then
+tr:Attack(v)
+Sleep(800,tr.handle)
+                                                break
+                                        end
+                                end
+                        end
+                end
+        end
+	end
 end
+
 
 
 
 function Load()
-	if PlayingGame() then
-		local me = entityList:GetMyHero()
-			statusText.visible = true
-		if not me or me.classId ~= CDOTA_Unit_Hero_Furion or not client.connected or client.loading or client.console  then 
-			script:Disable()
-		else
-			play, target, myhero = true, nil, me.classId
-			script:RegisterEvent(EVENT_KEY, Key)
-			script:RegisterEvent(EVENT_TICK, Main)
-			script:UnregisterEvent(Load)
-		end
-	end
+        if PlayingGame() then
+                local me = entityList:GetMyHero()
+statusText.visible = true
+                if not me or me.classId ~= CDOTA_Unit_Hero_Furion or not client.connected or client.loading or client.console then
+script:Disable()
+                else
+play, target, myhero = true, nil, me.classId
+script:RegisterEvent(EVENT_KEY, Key)
+script:RegisterEvent(EVENT_TICK, Main)
+script:RegisterEvent(EVENT_TICK, Denay)
+script:UnregisterEvent(Load)
+                end
+        end
 end
-
-
-
+ 
+ 
+ 
 function Close()
-	target, myhero = nil, nil
-	collectgarbage("collect")
-	if play then
-		script:UnregisterEvent(Main)
-        script:UnregisterEvent(Key)
-		script:RegisterEvent(EVENT_TICK,Load)
-		play = false
-	end
+target, myhero = nil, nil
+        collectgarbage("collect")
+        if play then
+script:UnregisterEvent(Main)
+script:UnregisterEvent(Denay)
+script:UnregisterEvent(Key)
+script:RegisterEvent(EVENT_TICK,Load)
+statusText.visible = false
+play = false
+        end
 end
-
-script:RegisterEvent(EVENT_CLOSE, Close) 
+ 
+script:RegisterEvent(EVENT_CLOSE, Close)
 script:RegisterEvent(EVENT_TICK, Load)
