@@ -87,7 +87,7 @@ function Main(tick)
 				local CP = Q:FindCastPoint()
 				local speed = 1300  
 				local distance = GetDistance2D(target, me)
-				local delay =100+client.latency
+				local delay =200+client.latency
 				local xyz = SkillShot.SkillShotXYZ(me,target,delay,speed)
 					if xyz and distance <= 1400  then  
 						me:SafeCastAbility(Q, xyz)
