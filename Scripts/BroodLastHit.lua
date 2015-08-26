@@ -1,0 +1,164 @@
+--<<Spider LastHit: Beta version. V.0.1 >>
+require("libs.Utils")
+require("libs.ScriptConfig")
+ 
+ 
+config = ScriptConfig.new()
+config:SetParameter("Spider", "D", config.TYPE_HOTKEY)
+config:SetParameter("SpiderQ", "D", config.TYPE_HOTKEY)
+config:SetParameter("DenyWithSpider", true)
+config:SetParameter("LastHitWithSpider", true)
+config:Load()
+ 
+local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
+
+ 
+local spidersLastHit = config.LastHitWithSpider
+local spidersDeny = config.DenyWithSpider
+ 
+local damage = 68
+local damageSp = 18
+ 
+ 
+local KeyUp = config.Spider
+local Spider = false
+local play = false
+ 
+--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~--
+ 
+local x,y = 220,15
+local monitor = client.screenSize.x/1600
+local font = drawMgr:CreateFont("font","Verdana",12,300)
+local statusText = drawMgr:CreateText(x*monitor,y*monitor,0x66FF33FF,"(" .. string.char(KeyUp) .. ")It is time to LastHit.",font) statusText.visible = false
+ 
+local me = entityList:GetMyHero()
+ 
+function Key(msg, code)
+
+    if client.chat or client.console or client.loading then return end 
+
+
+    if IsKeyDown(KeyUp) then 
+        Spider = not Spider
+
+        if Spider  then
+            statusText.text = "(" ..string.char(KeyUp) .. ") LastHit Spider Active"
+            Spider = true
+        else
+            statusText.text = "(" ..string.char(KeyUp) .. ") LastHit Spider UnActive"
+            Spider = false
+        end
+		
+    end
+end
+ 
+ 
+
+function Main(tick)
+if Spider then
+    if client.pause or client.shopOpen or not SleepCheck()  then return end
+	local tr = entityList:GetMyPlayer()
+    local me = entityList:GetMyHero()
+       
+		local creeps = entityList:GetEntities(function (v) return (v.courier or (v.creep and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned) or v.classId == CDOTA_BaseNPC_Tower or v.classId == CDOTA_BaseNPC_Venomancer_PlagueWard or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Siege and v.spawned) or v.classId == CDOTA_Unit_VisageFamiliar or v.classId == CDOTA_Unit_Undying_Zombie or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Broodmother_Spiderling or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.alive and v.health > 0  end)
+		local creep = entityList:GetEntities(function (v) return ((v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned)  or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned)  or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.team == me:GetEnemyTeam() and v.alive and v.health > 20  end)
+		local Spiderlings = entityList:GetEntities({classId=CDOTA_Unit_Broodmother_Spiderling, controllable=true, team=me.team, alive=true})
+		
+		local Q = me:GetAbility(1)
+		local Soul = me:FindItem("item_soul_ring")
+		local Qlvl = {74,149,224,299}
+		local SoulLvl = {120,190,270,360}
+		local target = targetFind:GetClosestToMouse(100)
+		if GetDistance2D(me,target) > 600 then
+			for i,v in ipairs(creep) do
+		
+                local offset = v.healthbarOffset
+                if offset == -1 then return end
+                if v.visible and v.alive  then
+					
+					if Q and Q:CanBeCasted() and Q.level > 0 and v.health < Qlvl[Q.level] and me:GetDistance2D(v) <= 600   and SleepCheck(tr.handle) then
+					local me = entityList:GetMyHero()
+						for l,tr in ipairs(creep) do
+							if  me:GetDistance2D(v) <= 600  and SleepCheck(tr.handle) then
+								me:CastAbility(me:GetAbility(1),v)
+								Sleep(400,tr.handle)
+							end
+						end
+					end	
+					if Q and Soul and Q.level > 0 and Q:CanBeCasted() and Soul:CanBeCasted() and v.health < SoulLvl[Q.level] and me:GetDistance2D(v) <= 600   and SleepCheck(tr.handle) then
+					local me = entityList:GetMyHero()
+						for l,tr in ipairs(creep) do
+							if  me:GetDistance2D(v) <= 600  and SleepCheck(tr.handle) then
+								me:SafeCastItem(Soul.name)
+								Sleep(400,tr.handle)
+							end
+						end
+					end	
+				end
+			end
+		end
+        for i,v in ipairs(creeps) do
+                local offset = v.healthbarOffset
+                if offset == -1 then return end
+                if v.visible and v.alive  then
+                        if spidersLastHit and v.health > (damage+10*(1-v.dmgResist)) and v.health < (damage+10*(1-v.dmgResist))+38 then
+                                for l,tr in ipairs(Spiderlings) do
+                                        if  v:GetDistance2D(tr) <= 600  and SleepCheck(tr.handle) then
+tr:Attack(v)
+Sleep(500,tr.handle)
+                                                break
+                                        end
+                                end
+                       end
+                end
+        end
+        for i,v in ipairs(Spiderlings) do
+                local offset = v.healthbarOffset
+                if offset == -1 then return end
+                if v.visible and v.alive  then
+                        if spidersDeny and v.health > (damageSp+10*(1-v.dmgResist)) and v.health < (damageSp+10*(1-v.dmgResist))+38 then
+                                for l,tr in ipairs(Spiderlings) do
+                                        if  v:GetDistance2D(tr) <= 600 and SleepCheck(tr.handle)   then
+tr:Attack(v)
+Sleep(300,tr.handle)
+                                                break
+                                        end
+                                end
+                        end
+                end
+        end	
+	end
+end
+
+
+function Load()
+        if PlayingGame() then
+                local me = entityList:GetMyHero()
+                if not me or me.classId ~= CDOTA_Unit_Hero_Broodmother or not client.connected or client.loading or client.console then
+script:Disable()
+                else
+statusText.visible = true
+play, target, myhero = true, nil, me.classId
+script:RegisterEvent(EVENT_TICK, Main)
+script:RegisterEvent(EVENT_KEY, Key)
+script:UnregisterEvent(Load)
+                end
+        end
+end
+ 
+ 
+ 
+function Close()
+target, myhero = nil, nil
+        collectgarbage("collect")
+        if play then
+script:UnregisterEvent(Main)
+script:UnregisterEvent(Key)
+statusText.visible = false
+script:RegisterEvent(EVENT_TICK,Load)
+play = false
+        end
+end
+ 
+script:RegisterEvent(EVENT_CLOSE, Close)
+script:RegisterEvent(EVENT_TICK, Load)
