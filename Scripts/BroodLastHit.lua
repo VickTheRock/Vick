@@ -67,7 +67,7 @@ if Spider then
 		local Qlvl = {74,149,224,299}
 		local SoulLvl = {120,190,270,360}
 		local enemy = entityList:GetEntities(function (v) return v.type==LuaEntity.TYPE_HERO and v.alive and not v.illusion and not v.visible and v.team==5-me.team end)
-		if GetDistance2D(me,enemy[1]) > 600  then
+		if GetDistance2D(me,enemy[1]) < 600  then
 			for i,v in ipairs(creep) do
 		
                 local offset = v.healthbarOffset
