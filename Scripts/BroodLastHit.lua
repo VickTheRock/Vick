@@ -1,4 +1,4 @@
---<<Spider LastHit: Beta version. V.0.3.1(need 1 test) >>
+--<<Spider LastHit: Beta version. V.0.3.1 >>
 require("libs.Utils")
 require("libs.ScriptConfig")
  
@@ -17,7 +17,7 @@ local spidersLastHit = config.LastHitWithSpider
 local spidersDeny = config.DenyWithSpider
 local spidersQ = config.UseQlasthit
 local damage = 78
-local damageSp = 58
+local damageSp = 38
  
  
 local KeyUp = config.Spider
