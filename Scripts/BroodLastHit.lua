@@ -56,7 +56,6 @@ function Main(tick)
 if Spider then
     if client.pause or client.shopOpen or not SleepCheck() then return end
 	
-		local tr = entityList:GetMyPlayer()
 		local me = entityList:GetMyHero()
 		local creeps = entityList:GetEntities(function (v) return (v.courier or (v.creep and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned) or v.classId == CDOTA_BaseNPC_Tower or v.classId == CDOTA_BaseNPC_Venomancer_PlagueWard or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Siege and v.spawned) or v.classId == CDOTA_Unit_VisageFamiliar or v.classId == CDOTA_Unit_Undying_Zombie  or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.alive and v.health > 0  end)
 		local creep = entityList:GetEntities(function (v) return ((v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned)  or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned)  or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.team == me:GetEnemyTeam() and v.alive and v.health > 20  end)
