@@ -7,6 +7,7 @@ config = ScriptConfig.new()
 config:SetParameter("Spider", "D", config.TYPE_HOTKEY)
 config:SetParameter("DenyWithSpider", true)
 config:SetParameter("LastHitWithSpider", true)
+config:SetParameter("UseQlasthit", true)
 config:Load()
  
 local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
@@ -14,7 +15,7 @@ local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
  
 local spidersLastHit = config.LastHitWithSpider
 local spidersDeny = config.DenyWithSpider
- 
+local spidersQ = config.UseQlasthit
 local damage = 78
 local damageSp = 58
  
@@ -66,7 +67,7 @@ if Spider then
 		local Qlvl = {74,149,224,299}
 		local SoulLvl = {120,190,270,360}
 		local enemy = entityList:GetEntities(function (v) return v.type==LuaEntity.TYPE_HERO and v.alive and not v.illusion and not v.visible and v.team==5-me.team end)
-		if --[[GetDistance2D(me,enemy[1]) < 600 and ]] me.alive then
+		if --[[GetDistance2D(me,enemy[1]) < 600 and ]] spidersQ and  me.alive then
 			for i,v in ipairs(creep) do
 		
                 local offset = v.healthbarOffset
