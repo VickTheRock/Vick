@@ -15,8 +15,8 @@ local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
 local spidersLastHit = config.LastHitWithSpider
 local spidersDeny = config.DenyWithSpider
  
-local damage = 68
-local damageSp = 18
+local damage = 78
+local damageSp = 28
  
  
 local KeyUp = config.Spider
@@ -57,34 +57,36 @@ if Spider then
 	
 		local tr = entityList:GetMyPlayer()
 		local me = entityList:GetMyHero()
-		local creeps = entityList:GetEntities(function (v) return (v.courier or (v.creep and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned) or v.classId == CDOTA_BaseNPC_Tower or v.classId == CDOTA_BaseNPC_Venomancer_PlagueWard or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Siege and v.spawned) or v.classId == CDOTA_Unit_VisageFamiliar or v.classId == CDOTA_Unit_Undying_Zombie or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Broodmother_Spiderling or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.alive and v.health > 0  end)
+		local creeps = entityList:GetEntities(function (v) return (v.courier or (v.creep and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned) or v.classId == CDOTA_BaseNPC_Tower or v.classId == CDOTA_BaseNPC_Venomancer_PlagueWard or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Siege and v.spawned) or v.classId == CDOTA_Unit_VisageFamiliar or v.classId == CDOTA_Unit_Undying_Zombie or v.classId == CDOTA_Unit_Broodmother_Spiderling or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.alive and v.health > 0  end)
 		local creep = entityList:GetEntities(function (v) return ((v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned)  or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned)  or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.team == me:GetEnemyTeam() and v.alive and v.health > 20  end)
-		local Spiderlings = entityList:GetEntities({classId=CDOTA_Unit_Broodmother_Spiderling, controllable=true, team=me.team, alive=true})
+		local Spiderlings = entityList:GetEntities({classId=CDOTA_Unit_Broodmother_Spiderling, controllable=true, alive=true})
 		
 		local Q = me:GetAbility(1)
 		local Soul = me:FindItem("item_soul_ring")
 		local Qlvl = {74,149,224,299}
 		local SoulLvl = {120,190,270,360}
 		local enemy = entityList:GetEntities(function (v) return v.type==LuaEntity.TYPE_HERO and v.alive and not v.illusion and not v.visible and v.team==5-me.team end)
-		if GetDistance2D(me,enemy[1]) < 600 then
+		if GetDistance2D(me,enemy[1]) < 600 and me.alive then
 			for i,v in ipairs(creep) do
 		
                 local offset = v.healthbarOffset
                 if offset == -1 then return end
                 if v.visible and v.alive  then
-					if Q and Q:CanBeCasted() and Q.level > 0 and v.health < Qlvl[Q.level] and me:GetDistance2D(v) <= 600 then
+					if Q and Q:CanBeCasted() and Q.level > 0 and v.health < Qlvl[Q.level]  and me:GetDistance2D(v) <= 600 then
 					local me = entityList:GetMyHero()
 						for l,tr in ipairs(creep) do
-							if  me:GetDistance2D(v) <= 600 then
+							if  me:GetDistance2D(v) <= 600 and SleepCheck("tr.handle") then
 								me:CastAbility(me:GetAbility(1),v)
+								Sleep(client.latency+300,"tr.handle")
 							end
 						end
 					end	
 					if Q and Soul and Q.level > 0 and Q:CanBeCasted() and Soul:CanBeCasted() and v.health < SoulLvl[Q.level] and me:GetDistance2D(v) <= 600 then
 					local me = entityList:GetMyHero()
 						for l,tr in ipairs(creep) do
-							if  me:GetDistance2D(v) <= 600 then
+							if  me:GetDistance2D(v) <= 600 and SleepCheck("tr.handle") then
 								me:SafeCastItem(Soul.name)
+								Sleep(client.latency+300,"tr.handle")
 							end
 						end
 					end	
@@ -97,7 +99,7 @@ if Spider then
            if v.visible and v.alive  then
                if spidersLastHit and v.health > (damage+10*(1-v.dmgResist)) and v.health < (damage+10*(1-v.dmgResist))+38 then
                      for l,tr in ipairs(Spiderlings) do
-                       if  v:GetDistance2D(tr) <= 600 then
+                       if  v:GetDistance2D(tr) <= 700 then
 							tr:Attack(v)
                        end
                     end
@@ -110,13 +112,13 @@ if Spider then
             if v.visible and v.alive  then
                 if spidersDeny and v.health > (damageSp+10*(1-v.dmgResist)) and v.health < (damageSp+10*(1-v.dmgResist))+38 then
                     for l,tr in ipairs(Spiderlings) do
-                        if v:GetDistance2D(tr) <= 600 then
+                        if v:GetDistance2D(tr) <= 700 then
 							tr:Attack(v)
 						end
                   end
                end
 			end
-        end	
+        end
 	Sleep(200)
 	end
 end
