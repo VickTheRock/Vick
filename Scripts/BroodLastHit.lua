@@ -119,7 +119,7 @@ if Spider and tick > sleep then
 				end
 			end
         end
-	sleep = tick + 170
+	sleep = tick + 240
 	end
 end
 
