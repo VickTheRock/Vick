@@ -1,11 +1,10 @@
---<<Spider LastHit: Beta version. V.0.2 >>
+--<<Spider LastHit: Beta version. V.0.3 >>
 require("libs.Utils")
 require("libs.ScriptConfig")
  
  
 config = ScriptConfig.new()
 config:SetParameter("Spider", "D", config.TYPE_HOTKEY)
-config:SetParameter("SpiderQ", "D", config.TYPE_HOTKEY)
 config:SetParameter("DenyWithSpider", true)
 config:SetParameter("LastHitWithSpider", true)
 config:Load()
@@ -54,7 +53,7 @@ end
 
 function Main(tick)
 if Spider then
-    if client.pause or client.shopOpen or not SleepCheck()  then return end
+    if client.pause or client.shopOpen or not SleepCheck() then return end
 	
 		local tr = entityList:GetMyPlayer()
 		local me = entityList:GetMyHero()
@@ -67,25 +66,24 @@ if Spider then
 		local Qlvl = {74,149,224,299}
 		local SoulLvl = {120,190,270,360}
 		local enemy = entityList:GetEntities(function (v) return v.type==LuaEntity.TYPE_HERO and v.alive and not v.illusion and not v.visible and v.team==5-me.team end)
-		if GetDistance2D(me,enemy[1]) < 600  then
+		if GetDistance2D(me,enemy[1]) < 600 then
 			for i,v in ipairs(creep) do
 		
                 local offset = v.healthbarOffset
                 if offset == -1 then return end
                 if v.visible and v.alive  then
-					if Q and Q:CanBeCasted() and Q.level > 0 and v.health < Qlvl[Q.level] and me:GetDistance2D(v) <= 600   and SleepCheck(tr.handle) then
+					if Q and Q:CanBeCasted() and Q.level > 0 and v.health < Qlvl[Q.level] and me:GetDistance2D(v) <= 600 then
 					local me = entityList:GetMyHero()
 						for l,tr in ipairs(creep) do
-							if  me:GetDistance2D(v) <= 600 and SleepCheck(tr.handle) then
+							if  me:GetDistance2D(v) <= 600 then
 								me:CastAbility(me:GetAbility(1),v)
-								Sleep(450,tr.handle)
 							end
 						end
 					end	
-					if Q and Soul and Q.level > 0 and Q:CanBeCasted() and Soul:CanBeCasted() and v.health < SoulLvl[Q.level] and me:GetDistance2D(v) <= 600   and SleepCheck(tr.handle) then
+					if Q and Soul and Q.level > 0 and Q:CanBeCasted() and Soul:CanBeCasted() and v.health < SoulLvl[Q.level] and me:GetDistance2D(v) <= 600 then
 					local me = entityList:GetMyHero()
 						for l,tr in ipairs(creep) do
-							if  me:GetDistance2D(v) <= 600  and SleepCheck(tr.handle) then
+							if  me:GetDistance2D(v) <= 600 then
 								me:SafeCastItem(Soul.name)
 								Sleep(450,tr.handle)
 							end
@@ -100,10 +98,8 @@ if Spider then
            if v.visible and v.alive  then
                if spidersLastHit and v.health > (damage+10*(1-v.dmgResist)) and v.health < (damage+10*(1-v.dmgResist))+38 then
                      for l,tr in ipairs(Spiderlings) do
-                       if  v:GetDistance2D(tr) <= 600  and SleepCheck(tr.handle) then
-tr:Attack(v)
-Sleep(500,tr.handle)
-                          break
+                       if  v:GetDistance2D(tr) <= 600 then
+							tr:Attack(v)
                        end
                     end
                end
@@ -115,32 +111,31 @@ Sleep(500,tr.handle)
             if v.visible and v.alive  then
                 if spidersDeny and v.health > (damageSp+10*(1-v.dmgResist)) and v.health < (damageSp+10*(1-v.dmgResist))+38 then
                     for l,tr in ipairs(Spiderlings) do
-                        if  v:GetDistance2D(tr) <= 600 and SleepCheck(tr.handle)   then
-tr:Attack(v)
-Sleep(350,tr.handle)
-                        break
-                     end
+                        if v:GetDistance2D(tr) <= 600 then
+							tr:Attack(v)
+						end
                   end
                end
 			end
         end	
+	Sleep(200)
 	end
 end
 
 
 function Load()
-        if PlayingGame() then
+    if PlayingGame() then
                 local me = entityList:GetMyHero()
                 if not me or me.classId ~= CDOTA_Unit_Hero_Broodmother or not client.connected or client.loading or client.console then
-script:Disable()
-                else
-statusText.visible = true
-play, target, myhero = true, nil, me.classId
-script:RegisterEvent(EVENT_TICK, Main)
-script:RegisterEvent(EVENT_KEY, Key)
-script:UnregisterEvent(Load)
-                end
+				script:Disable()
+        else
+			statusText.visible = true
+			play, target, myhero = true, nil, me.classId
+			script:RegisterEvent(EVENT_TICK, Main)
+			script:RegisterEvent(EVENT_KEY, Key)
+			script:UnregisterEvent(Load)
         end
+    end
 end
  
  
