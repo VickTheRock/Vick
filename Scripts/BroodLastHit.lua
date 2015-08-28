@@ -85,7 +85,6 @@ if Spider then
 						for l,tr in ipairs(creep) do
 							if  me:GetDistance2D(v) <= 600 then
 								me:SafeCastItem(Soul.name)
-								Sleep(450,tr.handle)
 							end
 						end
 					end	
