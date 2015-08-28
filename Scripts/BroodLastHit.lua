@@ -53,12 +53,12 @@ end
  
 
 function Main(tick)
-if Spider then
+if Spider and tick > sleep then
     if client.pause or client.shopOpen or not SleepCheck() then return end
 	
 		local me = entityList:GetMyHero()
-		local creeps = entityList:GetEntities(function (v) return (v.courier or (v.creep and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned) or v.classId == CDOTA_BaseNPC_Tower or v.classId == CDOTA_BaseNPC_Venomancer_PlagueWard or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Siege and v.spawned) or v.classId == CDOTA_Unit_VisageFamiliar or v.classId == CDOTA_Unit_Undying_Zombie  or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.alive and v.health > 0  end)
-		local creep = entityList:GetEntities(function (v) return ((v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned)  or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned)  or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.team == me:GetEnemyTeam() and v.alive and v.health > 20  end)
+		local creeps = entityList:GetEntities(function (v) return (v.courier or (v.creep and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned) or v.classId == CDOTA_BaseNPC_Tower or v.classId == CDOTA_BaseNPC_Venomancer_PlagueWard or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Siege and v.spawned) or v.classId == CDOTA_Unit_VisageFamiliar or v.classId == CDOTA_Unit_Undying_Zombie  or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.alive and v.health > 0 end)
+		local creep = entityList:GetEntities(function (v) return (v.classId == CDOTA_BaseNPC_Creep_Neutral  or v.classId == CDOTA_BaseNPC_Warlock_Golem or v.classId == CDOTA_BaseNPC_Creep_Lane   or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.team == me:GetEnemyTeam() and v.alive and v.health > 20  end)
 		local Spiderlings = entityList:GetEntities({classId=CDOTA_Unit_Broodmother_Spiderling, controllable=true, alive=true})
 		
 		local Q = me:GetAbility(1)
@@ -97,7 +97,7 @@ if Spider then
         local offset = v.healthbarOffset
         if offset == -1 then return end
            if v.visible and v.alive  then
-               if spidersLastHit and v.health > (damage+10*(1-v.dmgResist)) and v.health < (damage+10*(1-v.dmgResist))+68 then
+               if spidersLastHit  and v.health < (damage+10*(1-v.dmgResist))+68 then
                      for l,tr in ipairs(Spiderlings) do
                        if  v:GetDistance2D(tr) <= 700 then
 							tr:Attack(v)
@@ -110,7 +110,7 @@ if Spider then
         local offset = v.healthbarOffset
         if offset == -1 then return end
             if v.visible and v.alive  then
-                if spidersDeny and v.health > (damageSp+10*(1-v.dmgResist)) and v.health < (damageSp+10*(1-v.dmgResist))+38 then
+                if spidersDeny  and v.health < (damageSp+10*(1-v.dmgResist))+38 then
                     for l,tr in ipairs(Spiderlings) do
                         if v:GetDistance2D(tr) <= 700 then
 							tr:Attack(v)
@@ -119,7 +119,7 @@ if Spider then
 				end
 			end
         end
-	Sleep(200)
+	sleep = tick + 170
 	end
 end
 
