@@ -95,12 +95,7 @@ function Main(tick)
     if client.pause or client.shopOpen or not SleepCheck()  then return end
      local me = entityList:GetMyHero()   
        
-        --LASTHITS/DENIES INDEV
        
-        -- Get visible enemies --
-        local enemies = entityList:GetEntities({type=LuaEntity.TYPE_HERO,visible = true, alive = true, team = me:GetEnemyTeam(),illusion=false})
-        -- Get creeps in range
-        local creeps = entityList:GetEntities({classId=CDOTA_BaseNPC_Creep_Lane,alive=true,visible=true})
         -- Get visible treants
         local treants = entityList:GetEntities({classId=CDOTA_BaseNPC_Creep,alive = true,visible = true,controllable=true})
         -- Get treants damage
@@ -408,14 +403,14 @@ end
     if client.pause or client.shopOpen or not SleepCheck()  then return end
     local tr = entityList:GetMyPlayer()
     local me = entityList:GetMyHero()
-        --LASTHITS/DENIES INDEV
+       
        
         -- Get creeps in range
-        local creeps = entityList:GetEntities({classId=CDOTA_BaseNPC_Creep_Lane,alive=true,visible=true}) or entityList:GetEntities({classId=CDOTA_BaseNPC_Tower,alive=true,visible=true}) or entityList:GetEntities({classId=CDOTA_BaseNPC_Creep_Siege,alive=true,visible=true})
+        local creeps = entityList:GetEntities(function (v) return (v.courier or (v.creep and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned) or v.classId == CDOTA_BaseNPC_Tower or v.classId == CDOTA_BaseNPC_Venomancer_PlagueWard or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Siege and v.spawned) or v.classId == CDOTA_Unit_VisageFamiliar or v.classId == CDOTA_Unit_Undying_Zombie or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Broodmother_Spiderling or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.alive and v.health > 0  end)
         -- Get visible treants
 		local treants = entityList:GetEntities({classId=CDOTA_BaseNPC_Creep,team=me.team,alive=true,visible=true,controllable = true})
         -- Get treants damage
-
+		--LASTHITS/DENIES INDEV
         for i,v in ipairs(creeps) do
 		
                 local offset = v.healthbarOffset
