@@ -66,8 +66,8 @@ if Spider and tick > sleep then
 		local Soul = me:FindItem("item_soul_ring")
 		local Qlvl = {74,149,224,299}
 		local SoulLvl = {120,190,270,360}
-		local enemy = entityList:GetEntities(function (v) return v.type==LuaEntity.TYPE_HERO and v.alive and not v.illusion and not v.visible and v.team==5-me.team end)
-		if spidersQ--[[ and GetDistance2D(me,enemy[1]) > 600]] and me.alive then
+		local enemies = entityList:GetEntities({type=LuaEntity.TYPE_HERO,visible = true, alive = true, team = me:GetEnemyTeam(),illusion=false})
+		if spidersQ and me.alive then
 			for i,v in ipairs(creep) do
 		
                 local offset = v.healthbarOffset
@@ -91,6 +91,15 @@ if Spider and tick > sleep then
 							end
 						end
 					end	
+				end
+			end
+		end
+		for i,v in ipairs(enemies) do
+			if v.health > 0 and v.health/v.maxHealth <= 0.5 then
+				for l,tr in ipairs(Spiderlings) do
+					if GetDistance2D(v,tr) < 700 then
+						tr:Attack(v)
+					end
 				end
 			end
 		end
