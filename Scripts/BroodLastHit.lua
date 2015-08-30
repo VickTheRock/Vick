@@ -1,4 +1,4 @@
---<<Spider LastHit: Beta version. V.0.3.1 >>
+--<<Spider LastHit: Beta version. V.0.3.5 >>
 require("libs.Utils")
 require("libs.ScriptConfig")
  
@@ -69,13 +69,14 @@ if Spider and tick > sleep then
 		local enemies = entityList:GetEntities({type=LuaEntity.TYPE_HERO,visible = true, alive = true, team = me:GetEnemyTeam(),illusion=false})
 		if spidersQ and me.alive then
 			for i,v in ipairs(creep) do
-		
+				for i,x in ipairs(enemies) do
+				--if me:GetDistance2D(x) <= 600 then
                 local offset = v.healthbarOffset
                 if offset == -1 then return end
-                if v.visible and v.alive  then
+               if v.visible and v.alive  then
 					if Q and Q:CanBeCasted() and Q.level > 0 and v.health < Qlvl[Q.level]  and me:GetDistance2D(v) <= 600 then
 					local me = entityList:GetMyHero()
-						for l,tr in ipairs(creep) do
+						for l,v in ipairs(creep) do
 							if  me:GetDistance2D(v) <= 600 and SleepCheck("tr.handle") then
 								me:CastAbility(me:GetAbility(1),v)
 								Sleep(client.latency+300,"tr.handle")
@@ -84,7 +85,7 @@ if Spider and tick > sleep then
 					end	
 					if Q and Soul and Q.level > 0 and Q:CanBeCasted() and Soul:CanBeCasted() and v.health < SoulLvl[Q.level] and me:GetDistance2D(v) <= 600 then
 					local me = entityList:GetMyHero()
-						for l,tr in ipairs(creep) do
+						for l,v in ipairs(creep) do
 							if  me:GetDistance2D(v) <= 600 and SleepCheck("tr.handle") then
 								me:SafeCastItem(Soul.name)
 								Sleep(client.latency+300,"tr.handle")
@@ -93,15 +94,19 @@ if Spider and tick > sleep then
 					end	
 				end
 			end
+		--end
 		end
+		end
+		if #Spiderlings > 7 then
 		for i,v in ipairs(enemies) do
-			if v.health > 0 and v.health/v.maxHealth <= 0.5 then
+			if v.health > 0 and v.health/v.maxHealth <= 0.4 then
 				for l,tr in ipairs(Spiderlings) do
-					if GetDistance2D(v,tr) < 700 then
+					if GetDistance2D(tr,v) < 700 then
 						tr:Attack(v)
 					end
 				end
 			end
+		end
 		end
         for i,v in ipairs(creeps) do
         local offset = v.healthbarOffset
