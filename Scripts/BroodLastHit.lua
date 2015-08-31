@@ -19,7 +19,7 @@ local play, target, castQueue, castsleep, sleep = false, nil, {}, 0, 0
 local spidersLastHit = config.LastHitWithSpider
 local spidersDeny = config.DenyWithSpider
 local spidersQ = config.UseQlasthit
-local damage = 78
+local damage = 88
 local damageSp = 38
 
  
