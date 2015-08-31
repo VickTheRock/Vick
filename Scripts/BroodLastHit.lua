@@ -1,4 +1,4 @@
---<<Spider LastHit: Beta version. V.0.4 >>
+--<<Spider LastHit: Beta version. V.0.4.1 >>
 require("libs.Utils")
 require("libs.ScriptConfig")
 require("libs.TargetFind")
@@ -57,7 +57,7 @@ end
  
 
 function Main(tick)
-if Spider and not (IsKeyDown(config.Chase) or IsKeyDown(config.ChaseSpider)) and tick > sleep then
+if Spider and not (IsKeyDown(config.Chase) or IsKeyDown(config.ChaseSpider)) and tick > sleep and not client.paused then
     if client.pause or client.shopOpen or not SleepCheck() then return end
 	
 		local me = entityList:GetMyHero()
@@ -82,7 +82,7 @@ if Spider and not (IsKeyDown(config.Chase) or IsKeyDown(config.ChaseSpider)) and
 						for l,tr in ipairs(creep) do
 							if  me:GetDistance2D(v) <= 600 and SleepCheck("tr.handle") then
 								me:CastAbility(me:GetAbility(1),v)
-								Sleep(client.latency+300,"tr.handle")
+								Sleep(client.latency+600,"tr.handle")
 							end
 						end
 					end	
@@ -91,7 +91,7 @@ if Spider and not (IsKeyDown(config.Chase) or IsKeyDown(config.ChaseSpider)) and
 						for l,tr in ipairs(creep) do
 							if  me:GetDistance2D(v) <= 600 and SleepCheck("tr.handle") then
 								me:SafeCastItem(Soul.name)
-								Sleep(client.latency+300,"tr.handle")
+								Sleep(client.latency+600,"tr.handle")
 							end
 						end
 					end	
@@ -115,7 +115,7 @@ if Spider and not (IsKeyDown(config.Chase) or IsKeyDown(config.ChaseSpider)) and
         local offset = v.healthbarOffset
         if offset == -1 then return end
            if v.visible and v.alive  then
-               if spidersLastHit  and v.health < (damage+10*(1-v.dmgResist))+68 then
+               if spidersLastHit  and v.health < (damage+10*(1-v.dmgResist))+88 then
                      for l,tr in ipairs(Spiderlings) do
                        if  v:GetDistance2D(tr) <= 700 then
 							tr:Attack(v)
@@ -137,7 +137,7 @@ if Spider and not (IsKeyDown(config.Chase) or IsKeyDown(config.ChaseSpider)) and
 				end
 			end
         end
-	sleep = tick + 240
+	sleep = tick + 400
 	end
 end
 
@@ -165,11 +165,12 @@ function Combo(tick)
 
 	local attackRange = me.attackRange	
 
-	if IsKeyDown(config.Chase) and not client.chat then	
-		v = targetFind:GetClosestToMouse(500)
+	if IsKeyDown(config.Chase) and not client.chat and not client.paused then	
+		v = targetFind:GetClosestToMouse(900)
 		
 		if v and GetDistance2D(me,v) <= 2000 then
 			if tick > sleep then
+					local tr = entityList:GetMyPlayer()
 					local Q, W, R = me:GetAbility(1), me:GetAbility(2), me:GetAbility(4)
 					local butterfly = me:FindItem("item_butterfly")
 					local moc = me:FindItem("item_medallion_of_courage") or me:FindItem("item_solar_crest")
@@ -217,18 +218,32 @@ function Combo(tick)
 						if mom and mom:CanBeCasted() and distance <= attackRange+200 then
 							table.insert(castQueue,{100,mom})
 						end
-						if R and R:CanBeCasted() and me.health > 800 then
+						if R and R:CanBeCasted() and R.cd > 5 and me.health > 800 then
 							table.insert(castQueue,{100,R})
 						end
-						if #ControlAttack > 0 then
-							for i,z in ipairs(ControlAttack) do
-								if z.controllable  then
-								local distance = GetDistance2D(z,v)
-									if distance <= 900 then
-										z:Attack(v)
-									end
-								end
-							end
+						local Spiderlings = entityList:GetEntities({classId=CDOTA_Unit_Broodmother_Spiderling, controllable=true, team=me.team, alive=true})
+						
+						if #Spiderlings > 6 then
+							local t = targetFind:GetClosestToMouse(900)
+						if (not v and t) or (v and v.visible and t) then
+							v = t
+						elseif target and not v.alive then
+							v = nil
+							ChaseSpider = false
+							return
+						end
+						if v and v.alive and SleepCheck("w") then
+							local z = tr.selection
+						for i,v in pairs(tr.selection) do tr:Unselect(v) end
+						for i,v in pairs(Spiderlings) do
+						if SleepCheck(v.handle) then
+							tr:SelectAdd(v)
+						end
+						end
+							tr:Attack(v)
+							SelectBack(z)
+						Sleep(500, "w")
+						end
 						end
 						if satanic and satanic:CanBeCasted() and me.health/me.maxHealth <= 0.4 and distance <= attackRange+50 then
 							table.insert(castQueue,{100,satanic})
@@ -243,11 +258,11 @@ function Combo(tick)
 					end
 						if v and distance <= 1500  then
 							if distance > 350 and SleepCheck("all") then
-								me:Follow(v)
+								tr:Follow(v)
 									Sleep(client.latency+200,"all")
 							end
 							if distance < 400 and SleepCheck("all") then
-								me:Attack(v)
+								tr:Attack(v)
 									Sleep(client.latency+300,"all")
 							end
 						end
@@ -256,23 +271,33 @@ function Combo(tick)
 			end
 		end	
 	
-	if IsKeyDown(config.ChaseSpider) and not client.chat then
+	if IsKeyDown(config.ChaseSpider) and not client.chat and not client.paused then
 		if tick > sleep then
-			v = targetFind:GetClosestToMouse(1000)
-			if v and GetDistance2D(me,v) <= 2000 then
-			local ControlAttack = entityList:GetEntities({classId=CDOTA_Unit_Broodmother_Spiderling, controllable=true, alive=true})
-				if #ControlAttack > 4 then
-					for i,z in ipairs(ControlAttack) do
-						if z.controllable  then
-								local distance = GetDistance2D(z,v)
-							if distance <= 2000 then
-								z:Attack(v)
-							end
+			local Spiderlings = entityList:GetEntities({classId=CDOTA_Unit_Broodmother_Spiderling, controllable=true, team=me.team, alive=true})
+			local tr = entityList:GetMyPlayer()
+			if #Spiderlings > 6 then
+				local t = targetFind:GetClosestToMouse(900)
+				if (not v and t) or (v and v.visible and t) then
+					v = t
+				elseif target and not v.alive then
+					v = nil
+					ChaseSpider = false
+					return
+				end
+				if v and v.alive and SleepCheck("w") then
+					local z = tr.selection
+					for i,v in pairs(tr.selection) do tr:Unselect(v) end
+					for i,v in pairs(Spiderlings) do
+						if SleepCheck(v.handle) then
+							tr:SelectAdd(v)
 						end
 					end
+					tr:Attack(v)
+					SelectBack(z)
+					Sleep(500, "w")
 				end
+				sleep = tick + 300
 			end
-			sleep = tick + 400
 		end
 	end
 end
