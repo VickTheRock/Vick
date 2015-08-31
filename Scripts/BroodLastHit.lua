@@ -217,7 +217,7 @@ function Combo(tick)
 						if mom and mom:CanBeCasted() and distance <= attackRange+200 then
 							table.insert(castQueue,{100,mom})
 						end
-						if R and R:CanBeCasted() and R.cd > 5 and me.health > 800 then
+						if R and R:CanBeCasted() and me.health > 800 then
 							table.insert(castQueue,{100,R})
 						end
 						if #ControlAttack > 0 then
