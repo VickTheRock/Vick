@@ -1,4 +1,4 @@
---<<Spider LastHit: Beta version. V.0.4.1 >>
+--<<Spider LastHit: Beta version. V.0.4.5 >>
 require("libs.Utils")
 require("libs.ScriptConfig")
 require("libs.TargetFind")
