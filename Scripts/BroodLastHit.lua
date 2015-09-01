@@ -64,7 +64,7 @@ if Spider and not (IsKeyDown(config.Chase) or IsKeyDown(config.ChaseSpider)) and
 				local creeps = entityList:GetEntities(function (v) return ((v.courier and v.team == me:GetEnemyTeam()) or (v.creep and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned) or v.classId == CDOTA_BaseNPC_Tower or v.classId == CDOTA_BaseNPC_Venomancer_PlagueWard or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Siege and v.spawned) or v.classId == CDOTA_Unit_VisageFamiliar and v.team == me:GetEnemyTeam()) or v.classId == CDOTA_Unit_Undying_Zombie or v.classId == CDOTA_Unit_SpiritBear or (v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.alive and v.health > 0  end)
 		local creep = entityList:GetEntities(function (v) return ( v.classId == CDOTA_BaseNPC_Warlock_Golem or v.classId == CDOTA_BaseNPC_Creep_Lane   or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.team == me:GetEnemyTeam() or v.classId == CDOTA_BaseNPC_Creep_Neutral  and v.alive and v.health > 20  end)
 		local Spiderlings = entityList:GetEntities({classId=CDOTA_Unit_Broodmother_Spiderling, controllable=true, alive=true})
-		
+		local Spiderlow = entityList:GetEntities(function (v) return ( v.classId == CDOTA_Unit_Broodmother_Spiderling) and v.alive and v.health < 70  end)
 		local Q = me:GetAbility(1)
 		local Soul = me:FindItem("item_soul_ring")
 		local Qlvl = {74,149,224,299}
@@ -124,6 +124,7 @@ if Spider and not (IsKeyDown(config.Chase) or IsKeyDown(config.ChaseSpider)) and
                end
            end
         end
+		if #Spiderlow < 7 then
         for i,v in ipairs(Spiderlings) do
         local offset = v.healthbarOffset
         if offset == -1 then return end
@@ -137,6 +138,7 @@ if Spider and not (IsKeyDown(config.Chase) or IsKeyDown(config.ChaseSpider)) and
 				end
 			end
         end
+		end
 	sleep = tick + 400
 	end
 end
