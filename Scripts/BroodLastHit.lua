@@ -1,4 +1,4 @@
---<<Spider LastHit: Beta version. V.0.4.5 >>
+--<<Spider LastHit: Beta version. V.0.4.6 >>
 require("libs.Utils")
 require("libs.ScriptConfig")
 require("libs.TargetFind")
@@ -60,7 +60,6 @@ function Main(tick)
 if Spider and not (IsKeyDown(config.Chase) or IsKeyDown(config.ChaseSpider)) and tick > sleep and not client.paused then
     if client.pause or client.shopOpen or not SleepCheck() then return end
 	
-		local me = entityList:GetMyHero()
 				local creeps = entityList:GetEntities(function (v) return ((v.courier and v.team == me:GetEnemyTeam()) or (v.creep and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Neutral and v.spawned) or v.classId == CDOTA_BaseNPC_Tower or v.classId == CDOTA_BaseNPC_Venomancer_PlagueWard or v.classId == CDOTA_BaseNPC_Warlock_Golem or (v.classId == CDOTA_BaseNPC_Creep_Lane and v.spawned) or (v.classId == CDOTA_BaseNPC_Creep_Siege and v.spawned) or v.classId == CDOTA_Unit_VisageFamiliar and v.team == me:GetEnemyTeam()) or v.classId == CDOTA_Unit_Undying_Zombie or v.classId == CDOTA_Unit_SpiritBear or (v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.alive and v.health > 0  end)
 		local creep = entityList:GetEntities(function (v) return ( v.classId == CDOTA_BaseNPC_Warlock_Golem or v.classId == CDOTA_BaseNPC_Creep_Lane   or v.classId == CDOTA_Unit_SpiritBear or v.classId == CDOTA_Unit_Hero_Beastmaster_Boar or v.classId == CDOTA_BaseNPC_Invoker_Forged_Spirit or v.classId == CDOTA_BaseNPC_Creep) and v.team == me:GetEnemyTeam() or v.classId == CDOTA_BaseNPC_Creep_Neutral  and v.alive and v.health > 20  end)
 		local Spiderlings = entityList:GetEntities({classId=CDOTA_Unit_Broodmother_Spiderling, controllable=true, alive=true})
@@ -227,22 +226,16 @@ function Combo(tick)
 						
 						if #Spiderlings > 6 then
 							local t = targetFind:GetClosestToMouse(900)
-						if (not v and t) or (v and v.visible and t) then
-							v = t
-						elseif target and not v.alive then
-							v = nil
-							ChaseSpider = false
-							return
-						end
+						
 						if v and v.alive and SleepCheck("w") then
 							local z = tr.selection
-						for i,v in pairs(tr.selection) do tr:Unselect(v) end
-						for i,v in pairs(Spiderlings) do
-						if SleepCheck(v.handle) then
-							tr:SelectAdd(v)
+						for i,c in pairs(tr.selection) do tr:Unselect(c) end
+						for i,c in pairs(Spiderlings) do
+						if SleepCheck(c.handle) then
+							tr:SelectAdd(c)
 						end
 						end
-							tr:Attack(v)
+							tr:Attack(t)
 							SelectBack(z)
 						Sleep(500, "w")
 						end
@@ -277,27 +270,21 @@ function Combo(tick)
 		if tick > sleep then
 			local Spiderlings = entityList:GetEntities({classId=CDOTA_Unit_Broodmother_Spiderling, controllable=true, team=me.team, alive=true})
 			local tr = entityList:GetMyPlayer()
-			if #Spiderlings > 6 then
-				local t = targetFind:GetClosestToMouse(900)
-				if (not v and t) or (v and v.visible and t) then
-					v = t
-				elseif target and not v.alive then
-					v = nil
-					ChaseSpider = false
-					return
-				end
-				if v and v.alive and SleepCheck("w") then
-					local z = tr.selection
-					for i,v in pairs(tr.selection) do tr:Unselect(v) end
-					for i,v in pairs(Spiderlings) do
-						if SleepCheck(v.handle) then
-							tr:SelectAdd(v)
+					if #Spiderlings > 6 then
+							local t = targetFind:GetClosestToMouse(900)
+						
+						if v and v.alive and SleepCheck("w") then
+							local z = tr.selection
+						for i,c in pairs(tr.selection) do tr:Unselect(c) end
+						for i,c in pairs(Spiderlings) do
+						if SleepCheck(c.handle) then
+							tr:SelectAdd(c)
 						end
-					end
-					tr:Attack(v)
-					SelectBack(z)
-					Sleep(500, "w")
-				end
+						end
+							tr:Attack(t)
+							SelectBack(z)
+						Sleep(500, "w")
+						end
 				sleep = tick + 300
 			end
 		end
